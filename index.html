@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Apiario La Ruda - productos apícolas y contacto directo." />
+  <meta name="theme-color" content="#77794f" />
+  <title>Apiario La Ruda</title>
+
+  <style>
+    :root {
+      --cream: #f7f0e6;
+      --cream-2: #fffaf3;
+      --olive: #77794f;
+      --olive-dark: #4f5135;
+      --olive-soft: #9a9b68;
+      --text: #2f3027;
+      --muted: #6b6a5f;
+      --white: #ffffff;
+      --line: rgba(79, 81, 53, 0.15);
+      --shadow: 0 18px 45px rgba(62, 63, 41, 0.13);
+      --radius: 22px;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 12%, rgba(154, 155, 104, 0.10), transparent 28%),
+        radial-gradient(circle at 92% 78%, rgba(154, 155, 104, 0.08), transparent 30%),
+        var(--cream-2);
+      line-height: 1.6;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .container {
+      width: min(calc(100% - 32px), var(--max));
+      margin-inline: auto;
+    }
+
+    .section {
+      padding: 88px 0;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 500;
+      line-height: 1.08;
+      color: var(--olive-dark);
+    }
+
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 12px;
+      color: var(--olive);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .section-kicker::before,
+    .section-kicker::after {
+      content: "";
+      width: 22px;
+      height: 1px;
+      background: currentColor;
+      opacity: 0.55;
+    }
+
+    .section-copy {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    /* NAV */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgba(79, 81, 53, 0.08);
+      background: rgba(255, 250, 243, 0.88);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand img {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 1px solid rgba(79, 81, 53, 0.25);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .brand-text strong {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 600;
+      font-size: 1.14rem;
+      color: var(--olive-dark);
+    }
+
+    .brand-text span {
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--olive);
+      margin-top: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      font-size: 0.95rem;
+      color: var(--muted);
+      transition: color .2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--olive-dark);
+    }
+
+    .nav-cta {
+      padding: 11px 18px;
+      border-radius: 999px;
+      background: var(--olive-dark);
+      color: white !important;
+      font-weight: 700;
+    }
+
+    .menu-button {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 12px;
+      background: rgba(119, 121, 79, 0.09);
+      color: var(--olive-dark);
+      cursor: pointer;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: calc(100vh - 76px);
+      display: grid;
+      align-items: center;
+      padding: 48px 0 68px;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.02fr 0.98fr;
+      align-items: center;
+      gap: 56px;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 13px;
+      border: 1px solid rgba(119, 121, 79, .20);
+      border-radius: 999px;
+      color: var(--olive-dark);
+      background: rgba(255, 255, 255, .56);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      margin: 22px 0 18px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3.15rem, 7vw, 6.5rem);
+      font-weight: 500;
+      line-height: .92;
+      letter-spacing: -.055em;
+      color: var(--olive-dark);
+    }
+
+    .hero h1 span {
+      display: block;
+      color: var(--olive);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .hero p {
+      max-width: 650px;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+      margin: 0;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 12px 20px;
+      border: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .button-primary {
+      color: white;
+      background: var(--olive-dark);
+      box-shadow: 0 12px 28px rgba(79, 81, 53, .20);
+    }
+
+    .button-secondary {
+      color: var(--olive-dark);
+      background: transparent;
+      border: 1px solid rgba(79, 81, 53, .26);
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 560px;
+      display: grid;
+      place-items: center;
+    }
+
+    .hero-orbit {
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border: 1px solid rgba(119, 121, 79, .18);
+      border-radius: 50%;
+    }
+
+    .hero-orbit::after {
+      content: "";
+      position: absolute;
+      inset: 34px;
+      border: 1px dashed rgba(119, 121, 79, .16);
+      border-radius: 50%;
+    }
+
+    .hero-logo {
+      width: min(100%, 500px);
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 50%;
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 2;
+      animation: float 5.2s ease-in-out infinite;
+    }
+
+    .bee {
+      position: absolute;
+      font-size: 1.6rem;
+      z-index: 4;
+      filter: grayscale(.15);
+      animation: beeFly 7s ease-in-out infinite;
+    }
+
+    .bee.one { top: 14%; right: 6%; }
+    .bee.two { bottom: 20%; left: 2%; animation-delay: -2.2s; font-size: 1.25rem; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-.3deg); }
+      50% { transform: translateY(-10px) rotate(.3deg); }
+    }
+
+    @keyframes beeFly {
+      0%,100% { transform: translate(0,0) rotate(-8deg); }
+      50% { transform: translate(15px,-10px) rotate(8deg); }
+    }
+
+    /* ABOUT */
+    .about {
+      background: rgba(119, 121, 79, .075);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: .85fr 1.15fr;
+      gap: 58px;
+      align-items: center;
+    }
+
+    .about-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      background: var(--olive);
+      min-height: 440px;
+      box-shadow: var(--shadow);
+    }
+
+    .about-card img {
+      width: 100%;
+      height: 100%;
+      min-height: 440px;
+      object-fit: cover;
+      mix-blend-mode: multiply;
+      opacity: .86;
+    }
+
+    .about-badge {
+      position: absolute;
+      left: 20px;
+      bottom: 20px;
+      width: calc(100% - 40px);
+      padding: 20px;
+      border-radius: 18px;
+      color: #fff;
+      background: rgba(50, 51, 34, .80);
+      backdrop-filter: blur(12px);
+    }
+
+    .about-badge strong {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.5rem;
+      margin-bottom: 3px;
+    }
+
+    .about-copy p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin: 0 0 16px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .pill {
+      padding: 9px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(119, 121, 79, .20);
+      background: rgba(255, 255, 255, .55);
+      color: var(--olive-dark);
+      font-size: .88rem;
+      font-weight: 700;
+    }
+
+    /* PRODUCTS */
+    .products-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 34px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.74);
+      box-shadow: 0 12px 32px rgba(66, 67, 46, 0.07);
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow);
+      border-color: rgba(119, 121, 79, .30);
+    }
+
+    .product-image-button {
+      position: relative;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      background: #ebe6d6;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+    }
+
+    .product-image-button img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .45s ease;
+    }
+
+    .product-card:hover .product-image-button img {
+      transform: scale(1.035);
+    }
+
+    .product-image-label {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,250,243,.90);
+      backdrop-filter: blur(8px);
+      color: var(--olive-dark);
+      font-weight: 800;
+      font-size: .72rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .product-body {
+      padding: 22px;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    .product-title {
+      margin: 0 0 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--olive-dark);
+      font-size: 1.55rem;
+      line-height: 1.15;
+    }
+
+    .product-description {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .product-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .product-actions .button {
+      min-height: 44px;
+      padding-inline: 13px;
+      font-size: .9rem;
+    }
+
+    /* CONTACT */
+    .contact {
+      position: relative;
+    }
+
+    .contact-wrap {
+      display: grid;
+      grid-template-columns: .82fr 1.18fr;
+      gap: 24px;
+      padding: 26px;
+      border-radius: 30px;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(79,81,53,.98), rgba(119,121,79,.94));
+      box-shadow: var(--shadow);
+    }
+
+    .contact-copy {
+      padding: 32px;
+    }
+
+    .contact .section-kicker {
+      color: rgba(255,255,255,.75);
+    }
+
+    .contact .section-title {
+      color: white;
+    }
+
+    .contact-copy p {
+      color: rgba(255,255,255,.78);
+      margin: 0 0 24px;
+    }
+
+    .contact-details {
+      display: grid;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .contact-details a,
+    .contact-details span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-size: .95rem;
+    }
+
+    .form-card {
+      min-height: 560px;
+      overflow: hidden;
+      border-radius: 22px;
+      background: #fff;
+      color: var(--text);
+      position: relative;
+    }
+
+    .form-card iframe {
+      width: 100%;
+      min-height: 620px;
+      border: 0;
+      display: block;
+    }
+
+    .form-placeholder {
+      min-height: 560px;
+      padding: 44px 32px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background:
+        radial-gradient(circle at top right, rgba(154,155,104,.14), transparent 28%),
+        white;
+    }
+
+    .form-placeholder-inner {
+      max-width: 470px;
+    }
+
+    .form-placeholder h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--olive-dark);
+      font-size: 2rem;
+      margin: 0 0 12px;
+    }
+
+    .form-placeholder p {
+      color: var(--muted);
+      margin: 0 0 22px;
+    }
+
+    .mini-code {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f6f4ed;
+      color: #555844;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .82rem;
+      word-break: break-all;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 30px 0 40px;
+    }
+
+    .footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--olive-dark);
+    }
+
+    .footer-brand img {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+    }
+
+    /* WHATSAPP */
+    .whatsapp-float {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 45;
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #25D366;
+      color: white;
+      box-shadow: 0 12px 30px rgba(0,0,0,.18);
+      font-weight: 900;
+      font-size: 1.45rem;
+      transition: transform .2s ease;
+    }
+
+    .whatsapp-float:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    /* MODAL */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      place-items: center;
+      padding: 22px;
+      background: rgba(31, 31, 24, .68);
+      backdrop-filter: blur(7px);
+    }
+
+    .modal.open {
+      display: grid;
+    }
+
+    .modal-panel {
+      width: min(920px, 100%);
+      max-height: 90vh;
+      overflow: auto;
+      border-radius: 26px;
+      background: var(--cream-2);
+      box-shadow: 0 28px 90px rgba(0,0,0,.28);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 50%;
+      cursor: pointer;
+      background: rgba(255,255,255,.88);
+      color: var(--olive-dark);
+      font-size: 1.35rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,.10);
+    }
+
+    .modal-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .modal-image {
+      min-height: 480px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #e7e1d0;
+    }
+
+    .modal-copy {
+      padding: 52px 40px 38px;
+    }
+
+    .modal-copy .tag {
+      display: inline-block;
+      margin-bottom: 12px;
+      color: var(--olive);
+      font-size: .78rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .modal-copy h3 {
+      margin: 0 0 14px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2.45rem;
+      line-height: 1.05;
+      color: var(--olive-dark);
+    }
+
+    .modal-copy p {
+      color: var(--muted);
+      margin: 0 0 26px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* ANIMATION */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* MOBILE */
+    @media (max-width: 900px) {
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-grid,
+      .about-grid,
+      .contact-wrap,
+      .modal-content {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy {
+        text-align: center;
+      }
+
+      .hero p {
+        margin-inline: auto;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-visual {
+        min-height: auto;
+      }
+
+      .hero-orbit {
+        width: min(88vw, 470px);
+        height: min(88vw, 470px);
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .about-grid {
+        gap: 34px;
+      }
+
+      .contact-copy {
+        padding: 20px 12px 10px;
+      }
+
+      .modal-image {
+        min-height: 330px;
+        max-height: 46vh;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .section {
+        padding: 68px 0;
+      }
+
+      .nav-links {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        top: 70px;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255,250,243,.98);
+        box-shadow: var(--shadow);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 11px 12px;
+        border-radius: 10px;
+      }
+
+      .nav-links a:hover {
+        background: rgba(119,121,79,.08);
+      }
+
+      .menu-button {
+        display: inline-grid;
+        place-items: center;
+      }
+
+      .hero {
+        padding-top: 34px;
+      }
+
+      .hero-grid {
+        gap: 34px;
+      }
+
+      .hero h1 {
+        font-size: clamp(3rem, 17vw, 5rem);
+      }
+
+      .products-header {
+        display: block;
+      }
+
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .product-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-wrap {
+        padding: 16px;
+      }
+
+      .form-card,
+      .form-placeholder {
+        min-height: 480px;
+      }
+
+      .footer-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .modal-copy {
+        padding: 34px 24px 28px;
+      }
+
+      .whatsapp-float {
+        right: 16px;
+        bottom: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#inicio" aria-label="Ir al inicio">
+        <img src="assets/logo-redondo.jpg" alt="Logo Apiario La Ruda" />
+        <span class="brand-text">
+          <strong>Apiario La Ruda</strong>
+          <span>Productos apícolas</span>
+        </span>
+      </a>
+
+      <button class="menu-button" id="menuButton" aria-label="Abrir menú" aria-expanded="false">
+        ☰
+      </button>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="#inicio">Inicio</a>
+        <a href="#nosotros">Nosotros</a>
+        <a href="#productos">Productos</a>
+        <a class="nav-cta" href="#contacto">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <div class="eyebrow">Naturaleza · Colmena · Calidad</div>
+          <h1>Apiario <span>La Ruda</span></h1>
+          <p>
+            Productos apícolas seleccionados con dedicación. Conocé lo que hacemos,
+            elegí tu producto y comprá o consultanos de forma directa.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button button-primary" href="#productos">Ver productos</a>
+            <a class="button button-secondary" href="#nosotros">Conocernos</a>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal">
+          <div class="hero-orbit" aria-hidden="true"></div>
+          <span class="bee one" aria-hidden="true">🐝</span>
+          <span class="bee two" aria-hidden="true">🐝</span>
+          <img
+            class="hero-logo"
+            src="assets/logo-redondo.jpg"
+            alt="Ilustración de colmena y flores de Apiario La Ruda"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="section about" id="nosotros">
+      <div class="container about-grid">
+        <div class="about-card reveal">
+          <img src="assets/logo-horizontal.jpg" alt="Identidad visual de Apiario La Ruda" />
+          <div class="about-badge">
+            <strong>De la colmena a tu mesa.</strong>
+            <span>Una propuesta simple, natural y cercana.</span>
+          </div>
+        </div>
+
+        <div class="about-copy reveal">
+          <div class="section-kicker">Quiénes somos</div>
+          <h2 class="section-title">Una forma cercana de vivir la apicultura.</h2>
+          <p>
+            En <strong>Apiario La Ruda</strong> trabajamos vinculados a la apicultura y al
+            cuidado de las colmenas, buscando ofrecer productos seleccionados y una
+            atención directa para cada persona que se acerca a conocernos.
+          </p>
+          <p>
+            Esta página reúne nuestros productos en un solo lugar para que puedas
+            conocerlos, consultar sus características y acceder fácilmente al canal de
+            compra que corresponda.
+          </p>
+          <p>
+            La idea es mantener una comunicación simple: si sabés qué querés, podés ir
+            directamente a comprar; y si tenés dudas, podés escribirnos antes de elegir.
+          </p>
+
+          <div class="pill-row">
+            <span class="pill">Atención directa</span>
+            <span class="pill">Productos apícolas</span>
+            <span class="pill">Compra simple</span>
+            <span class="pill">Consultas por WhatsApp</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="productos">
+      <div class="container">
+        <div class="products-header reveal">
+          <div>
+            <div class="section-kicker">Nuestros productos</div>
+            <h2 class="section-title">Elegí, conocé y consultá.</h2>
+            <p class="section-copy">
+              Cada producto tiene su acceso de compra y un botón de consulta directa.
+              Las imágenes, nombres, textos y enlaces se cambian desde una sola sección del código.
+            </p>
+          </div>
+        </div>
+
+        <div class="product-grid" id="productGrid"></div>
+      </div>
+    </section>
+
+    <section class="section contact" id="contacto">
+      <div class="container">
+        <div class="contact-wrap reveal">
+          <div class="contact-copy">
+            <div class="section-kicker">Contacto</div>
+            <h2 class="section-title">¿Querés consultarnos algo?</h2>
+            <p>
+              Podés escribirnos por WhatsApp o completar el formulario.
+              Cuando tengas tu Google Forms, pegás la URL en la configuración y se mostrará aquí mismo.
+            </p>
+
+            <a class="button button-primary" id="generalWhatsAppButton" href="#" target="_blank" rel="noopener">
+              Consultar por WhatsApp
+            </a>
+
+            <div class="contact-details">
+              <span>🐝 Apiario La Ruda</span>
+              <span>📍 Argentina</span>
+              <span>💬 Atención directa</span>
+            </div>
+          </div>
+
+          <div class="form-card" id="formContainer">
+            <div class="form-placeholder">
+              <div class="form-placeholder-inner">
+                <h3>Google Forms</h3>
+                <p>
+                  El espacio ya está preparado. Cuando tengas el formulario,
+                  copiá la URL de inserción en la configuración del sitio.
+                </p>
+                <div class="mini-code">GOOGLE_FORM_EMBED_URL</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-row">
+      <div class="footer-brand">
+        <img src="assets/logo-redondo.jpg" alt="" />
+        <span>Apiario La Ruda</span>
+      </div>
+      <div>© <span id="year"></span> Apiario La Ruda. Todos los derechos reservados.</div>
+    </div>
+  </footer>
+
+  <a
+    class="whatsapp-float"
+    id="whatsappFloat"
+    href="#"
+    target="_blank"
+    rel="noopener"
+    aria-label="Contactar por WhatsApp"
+    title="WhatsApp"
+  >W</a>
+
+  <div class="modal" id="productModal" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="Cerrar">×</button>
+
+      <div class="modal-content">
+        <img class="modal-image" id="modalImage" src="" alt="" />
+
+        <div class="modal-copy">
+          <span class="tag">Apiario La Ruda</span>
+          <h3 id="modalTitle"></h3>
+          <p id="modalDescription"></p>
+
+          <div class="modal-actions">
+            <a class="button button-primary" id="modalBuy" href="#">Comprar</a>
+            <a class="button button-secondary" id="modalAsk" href="#" target="_blank" rel="noopener">
+              Consultar
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /*
+      ============================================================
+      CONFIGURACIÓN
+      Cambiá solamente esta parte para personalizar la web.
+      ============================================================
+    */
+
+    // Ejemplo Argentina: 54911XXXXXXXX
+    // Si queda vacío, WhatsApp abre el selector para compartir el mensaje.
+    const WHATSAPP_NUMBER = "";
+
+    // Pegá aquí la URL "embed" de Google Forms.
+    // Ejemplo:
+    // https://docs.google.com/forms/d/e/XXXXXXXX/viewform?embedded=true
+    const GOOGLE_FORM_EMBED_URL = "";
+
+    const products = [
+      {
+        id: 1,
+        name: "Producto 1",
+        category: "Apiario La Ruda",
+        description: "Descripción breve del producto. Contá qué es, para qué se usa y su principal característica.",
+        image: "assets/logo-redondo.jpg",
+        buyUrl: ""
+      },
+      {
+        id: 2,
+        name: "Producto 2",
+        category: "Apiario La Ruda",
+        description: "Descripción breve del producto. Podés cambiar este texto libremente.",
+        image: "assets/logo-redondo.jpg",
+        buyUrl: ""
+      },
+      {
+        id: 3,
+        name: "Producto 3",
+        category: "Apiario La Ruda",
+        description: "Descripción breve del producto. Agregá presentación, tamaño o detalle útil.",
+        image: "assets/logo-redondo.jpg",
+        buyUrl: ""
+      },
+      {
+        id: 4,
+        name: "Producto 4",
+        category: "Apiario La Ruda",
+        description: "Descripción breve del producto. Mantenela corta para que la tarjeta sea fácil de leer.",
+        image: "assets/logo-redondo.jpg",
+        buyUrl: ""
+      },
+      {
+        id: 5,
+        name: "Producto 5",
+        category: "Apiario La Ruda",
+        description: "Descripción breve del producto. El botón Consultar genera el mensaje automáticamente.",
+        image: "assets/logo-redondo.jpg",
+        buyUrl: ""
+      },
+      {
+        id: 6,
+        name: "Producto 6",
+        category: "Apiario La Ruda",
+        description: "Descripción breve del producto. Podés usar una foto diferente en cada tarjeta.",
+        image: "assets/logo-redondo.jpg",
+        buyUrl: ""
+      },
+      {
+        id: 7,
+        name: "Producto 7",
+        category: "Apiario La Ruda",
+        description: "Descripción breve del producto. El link Comprar puede apuntar a tu tienda o publicación.",
+        image: "assets/logo-redondo.jpg",
+        buyUrl: ""
+      }
+    ];
+
+    /*
+      ============================================================
+      FUNCIONAMIENTO
+      No hace falta tocar esta parte para cambiar productos.
+      ============================================================
+    */
+
+    const productGrid = document.getElementById("productGrid");
+    const productModal = document.getElementById("productModal");
+    const modalClose = document.getElementById("modalClose");
+    const modalImage = document.getElementById("modalImage");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDescription = document.getElementById("modalDescription");
+    const modalBuy = document.getElementById("modalBuy");
+    const modalAsk = document.getElementById("modalAsk");
+    const menuButton = document.getElementById("menuButton");
+    const navLinks = document.getElementById("navLinks");
+    const formContainer = document.getElementById("formContainer");
+    const whatsappFloat = document.getElementById("whatsappFloat");
+    const generalWhatsAppButton = document.getElementById("generalWhatsAppButton");
+
+    function whatsappUrl(message) {
+      const cleanNumber = String(WHATSAPP_NUMBER || "").replace(/\D/g, "");
+      const encodedMessage = encodeURIComponent(message);
+
+      if (cleanNumber) {
+        return `https://wa.me/${cleanNumber}?text=${encodedMessage}`;
+      }
+
+      return `https://wa.me/?text=${encodedMessage}`;
+    }
+
+    function productQuestion(product) {
+      return `Hola, quisiera consultar por ${product.name} de Apiario La Ruda.`;
+    }
+
+    function getBuyUrl(product) {
+      return product.buyUrl && product.buyUrl.trim()
+        ? product.buyUrl.trim()
+        : whatsappUrl(`Hola, quisiera comprar ${product.name} de Apiario La Ruda.`);
+    }
+
+    function renderProducts() {
+      productGrid.innerHTML = products.map((product, index) => `
+        <article class="product-card reveal" style="transition-delay:${Math.min(index * 60, 240)}ms">
+          <button
+            class="product-image-button"
+            type="button"
+            aria-label="Ver ${escapeHtml(product.name)}"
+            data-open-product="${product.id}"
+          >
+            <img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" loading="lazy" />
+            <span class="product-image-label">${escapeHtml(product.category || "Producto")}</span>
+          </button>
+
+          <div class="product-body">
+            <h3 class="product-title">${escapeHtml(product.name)}</h3>
+            <p class="product-description">${escapeHtml(product.description)}</p>
+
+            <div class="product-actions">
+              <a
+                class="button button-primary"
+                href="${escapeAttr(getBuyUrl(product))}"
+                ${getBuyUrl(product).startsWith("http") ? 'target="_blank" rel="noopener"' : ""}
+              >Comprar</a>
+
+              <a
+                class="button button-secondary"
+                href="${escapeAttr(whatsappUrl(productQuestion(product)))}"
+                target="_blank"
+                rel="noopener"
+              >Consultar</a>
+            </div>
+          </div>
+        </article>
+      `).join("");
+
+      document.querySelectorAll("[data-open-product]").forEach(button => {
+        button.addEventListener("click", () => {
+          const product = products.find(item => item.id === Number(button.dataset.openProduct));
+          if (product) openProductModal(product);
+        });
+      });
+
+      revealVisibleElements();
+    }
+
+    function openProductModal(product) {
+      modalImage.src = product.image;
+      modalImage.alt = product.name;
+      modalTitle.textContent = product.name;
+      modalDescription.textContent = product.description;
+      modalBuy.href = getBuyUrl(product);
+      modalBuy.target = getBuyUrl(product).startsWith("http") ? "_blank" : "_self";
+      modalAsk.href = whatsappUrl(productQuestion(product));
+
+      productModal.classList.add("open");
+      productModal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeProductModal() {
+      productModal.classList.remove("open");
+      productModal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    modalClose.addEventListener("click", closeProductModal);
+
+    productModal.addEventListener("click", event => {
+      if (event.target === productModal) closeProductModal();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && productModal.classList.contains("open")) {
+        closeProductModal();
+      }
+    });
+
+    menuButton.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+      menuButton.setAttribute("aria-expanded", String(isOpen));
+      menuButton.textContent = isOpen ? "×" : "☰";
+    });
+
+    navLinks.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        menuButton.setAttribute("aria-expanded", "false");
+        menuButton.textContent = "☰";
+      });
+    });
+
+    function loadGoogleForm() {
+      if (!GOOGLE_FORM_EMBED_URL.trim()) return;
+
+      const iframe = document.createElement("iframe");
+      iframe.src = GOOGLE_FORM_EMBED_URL.trim();
+      iframe.title = "Formulario de contacto Apiario La Ruda";
+      iframe.loading = "lazy";
+      iframe.textContent = "Cargando formulario…";
+      formContainer.innerHTML = "";
+      formContainer.appendChild(iframe);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value);
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    function revealVisibleElements() {
+      document.querySelectorAll(".reveal:not(.visible)").forEach(element => observer.observe(element));
+    }
+
+    const generalMessage = "Hola, quisiera hacer una consulta a Apiario La Ruda.";
+    whatsappFloat.href = whatsappUrl(generalMessage);
+    generalWhatsAppButton.href = whatsappUrl(generalMessage);
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    renderProducts();
+    loadGoogleForm();
+    revealVisibleElements();
+  </script>
+</body>
+</html>
