@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Apiario La Ruda - productos apícolas y contacto directo." />
+  <meta name="description" content="Apiario La Ruda — apicultura enfocada en la sanidad y el bienestar de las abejas. Productos apícolas y contacto directo." />
   <meta name="theme-color" content="#77794f" />
   <title>Apiario La Ruda</title>
 
@@ -129,7 +129,7 @@
       min-width: 0;
     }
 
-    .brand img {
+    .brand > img {
       width: 48px;
       height: 48px;
       object-fit: cover;
@@ -140,22 +140,23 @@
     .brand-text {
       display: flex;
       flex-direction: column;
-      line-height: 1.1;
+      justify-content: center;
+      line-height: 1;
     }
 
-    .brand-text strong {
-      font-family: Georgia, "Times New Roman", serif;
-      font-weight: 600;
-      font-size: 1.14rem;
-      color: var(--olive-dark);
+    .brand-wordmark {
+      width: 112px;
+      height: auto;
+      display: block;
     }
 
-    .brand-text span {
-      font-size: 0.72rem;
-      letter-spacing: 0.15em;
+    .brand-tagline {
+      margin-top: 1px;
+      padding-left: 3px;
+      font-size: 0.62rem;
+      letter-spacing: 0.20em;
       text-transform: uppercase;
-      color: var(--olive);
-      margin-top: 4px;
+      color: var(--olive-dark);
     }
 
     .nav-links {
@@ -230,20 +231,30 @@
     }
 
     .hero h1 {
-      margin: 22px 0 18px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(3.15rem, 7vw, 6.5rem);
-      font-weight: 500;
-      line-height: .92;
-      letter-spacing: -.055em;
+      margin: 22px 0 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      line-height: 1;
       color: var(--olive-dark);
     }
 
-    .hero h1 span {
+    .hero-apiario {
       display: block;
-      color: var(--olive);
-      font-style: italic;
-      font-weight: 400;
+      margin-left: 10px;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-size: clamp(1.15rem, 2.2vw, 2rem);
+      font-weight: 300;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--olive-dark);
+    }
+
+    .hero-wordmark {
+      width: min(100%, 560px);
+      height: auto;
+      display: block;
     }
 
     .hero p {
@@ -639,10 +650,15 @@
       color: var(--olive-dark);
     }
 
-    .footer-brand img {
+    .footer-brand > img:first-child {
       width: 34px;
       height: 34px;
       border-radius: 50%;
+    }
+
+    .footer-wordmark {
+      width: 94px;
+      height: auto;
     }
 
     /* WHATSAPP */
@@ -784,6 +800,14 @@
         text-align: center;
       }
 
+      .hero h1 {
+        align-items: center;
+      }
+
+      .hero-apiario {
+        margin-left: 0;
+      }
+
       .hero p {
         margin-inline: auto;
       }
@@ -866,8 +890,8 @@
         gap: 34px;
       }
 
-      .hero h1 {
-        font-size: clamp(3rem, 17vw, 5rem);
+      .hero-wordmark {
+        width: min(92vw, 470px);
       }
 
       .products-header {
@@ -916,10 +940,10 @@
   <header class="site-header">
     <div class="container nav">
       <a class="brand" href="#inicio" aria-label="Ir al inicio">
-        <img src="assets/logo-redondo.jpg" alt="Logo Apiario La Ruda" />
+        <img src="assets/logo-redondo.jpg" alt="" />
         <span class="brand-text">
-          <strong>Apiario La Ruda</strong>
-          <span>Productos apícolas</span>
+          <img class="brand-wordmark" src="assets/la-ruda-wordmark.png" alt="La Ruda" />
+          <span class="brand-tagline">Apiario</span>
         </span>
       </a>
 
@@ -940,16 +964,20 @@
     <section class="hero" id="inicio">
       <div class="container hero-grid">
         <div class="hero-copy reveal">
-          <div class="eyebrow">Naturaleza · Colmena · Calidad</div>
-          <h1>Apiario <span>La Ruda</span></h1>
+          <div class="eyebrow">Sanidad · Bienestar · Apicultura</div>
+          <h1>
+            <span class="hero-apiario">Apiario</span>
+            <img class="hero-wordmark" src="assets/la-ruda-wordmark.png" alt="La Ruda" />
+          </h1>
           <p>
-            Productos apícolas seleccionados con dedicación. Conocé lo que hacemos,
-            elegí tu producto y comprá o consultanos de forma directa.
+            En La Ruda cuidamos nuestras abejas poniendo el foco en su sanidad y bienestar.
+            De ese trabajo nacen los distintos productos que ofrecemos. Conocelos y, si tenés
+            alguna duda o consulta, no dudes en escribirnos.
           </p>
 
           <div class="hero-actions">
             <a class="button button-primary" href="#productos">Ver productos</a>
-            <a class="button button-secondary" href="#nosotros">Conocernos</a>
+            <a class="button button-secondary" href="#nosotros">Conocer el apiario</a>
           </div>
         </div>
 
@@ -971,8 +999,8 @@
         <div class="about-card reveal">
           <img src="assets/logo-horizontal.jpg" alt="Identidad visual de Apiario La Ruda" />
           <div class="about-badge">
-            <strong>De la colmena a tu mesa.</strong>
-            <span>Una propuesta simple, natural y cercana.</span>
+            <strong>El bienestar de las abejas, primero.</strong>
+            <span>Cuidamos cada colmena con observación y dedicación.</span>
           </div>
         </div>
 
@@ -980,25 +1008,21 @@
           <div class="section-kicker">Quiénes somos</div>
           <h2 class="section-title">Una forma cercana de vivir la apicultura.</h2>
           <p>
-            En <strong>Apiario La Ruda</strong> trabajamos vinculados a la apicultura y al
-            cuidado de las colmenas, buscando ofrecer productos seleccionados y una
-            atención directa para cada persona que se acerca a conocernos.
+            <strong>La Ruda</strong> es un apiario nacido del interés por las abejas, su cuidado
+            y el trabajo responsable dentro de la colmena. Ponemos especial atención en la
+            sanidad y el bienestar de nuestras abejas, buscando acompañar sus ciclos y trabajar
+            de manera consciente.
           </p>
           <p>
-            Esta página reúne nuestros productos en un solo lugar para que puedas
-            conocerlos, consultar sus características y acceder fácilmente al canal de
-            compra que corresponda.
-          </p>
-          <p>
-            La idea es mantener una comunicación simple: si sabés qué querés, podés ir
-            directamente a comprar; y si tenés dudas, podés escribirnos antes de elegir.
+            Creemos que un buen producto comienza en una colmena sana y bien cuidada. Por eso,
+            detrás de cada producto hay dedicación, observación y mucho trabajo en el apiario.
           </p>
 
           <div class="pill-row">
+            <span class="pill">Sanidad de las colmenas</span>
+            <span class="pill">Bienestar de las abejas</span>
+            <span class="pill">Trabajo responsable</span>
             <span class="pill">Atención directa</span>
-            <span class="pill">Productos apícolas</span>
-            <span class="pill">Compra simple</span>
-            <span class="pill">Consultas por WhatsApp</span>
           </div>
         </div>
       </div>
@@ -1009,10 +1033,10 @@
         <div class="products-header reveal">
           <div>
             <div class="section-kicker">Nuestros productos</div>
-            <h2 class="section-title">Elegí, conocé y consultá.</h2>
+            <h2 class="section-title">Productos del apiario.</h2>
             <p class="section-copy">
-              Cada producto tiene su acceso de compra y un botón de consulta directa.
-              Las imágenes, nombres, textos y enlaces se cambian desde una sola sección del código.
+              Conocé los productos que ofrecemos desde La Ruda. Si necesitás más información
+              sobre presentaciones, disponibilidad o formas de compra, escribinos y te asesoramos.
             </p>
           </div>
         </div>
@@ -1028,8 +1052,9 @@
             <div class="section-kicker">Contacto</div>
             <h2 class="section-title">¿Querés consultarnos algo?</h2>
             <p>
-              Podés escribirnos por WhatsApp o completar el formulario.
-              Cuando tengas tu Google Forms, pegás la URL en la configuración y se mostrará aquí mismo.
+              Si querés conocer más sobre un producto, consultar disponibilidad o simplemente
+              hacernos una pregunta, escribinos por WhatsApp o completá el formulario.
+              Te respondemos de forma directa.
             </p>
 
             <a class="button button-primary" id="generalWhatsAppButton" href="#" target="_blank" rel="noopener">
@@ -1061,7 +1086,7 @@
     <div class="container footer-row">
       <div class="footer-brand">
         <img src="assets/logo-redondo.jpg" alt="" />
-        <span>Apiario La Ruda</span>
+        <img class="footer-wordmark" src="assets/la-ruda-wordmark.png" alt="Apiario La Ruda" />
       </div>
       <div>© <span id="year"></span> Apiario La Ruda. Todos los derechos reservados.</div>
     </div>
