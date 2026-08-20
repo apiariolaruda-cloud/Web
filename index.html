@@ -335,25 +335,9 @@
       animation: float 5.2s ease-in-out infinite;
     }
 
-    .bee {
-      position: absolute;
-      font-size: 1.6rem;
-      z-index: 4;
-      filter: grayscale(.15);
-      animation: beeFly 7s ease-in-out infinite;
-    }
-
-    .bee.one { top: 14%; right: 6%; }
-    .bee.two { bottom: 20%; left: 2%; animation-delay: -2.2s; font-size: 1.25rem; }
-
     @keyframes float {
       0%, 100% { transform: translateY(0) rotate(-.3deg); }
       50% { transform: translateY(-10px) rotate(.3deg); }
-    }
-
-    @keyframes beeFly {
-      0%,100% { transform: translate(0,0) rotate(-8deg); }
-      50% { transform: translate(15px,-10px) rotate(8deg); }
     }
 
     /* ABOUT */
@@ -983,8 +967,6 @@
 
         <div class="hero-visual reveal">
           <div class="hero-orbit" aria-hidden="true"></div>
-          <span class="bee one" aria-hidden="true">🐝</span>
-          <span class="bee two" aria-hidden="true">🐝</span>
           <img
             class="hero-logo"
             src="assets/logo-redondo.jpg"
@@ -1034,10 +1016,6 @@
           <div>
             <div class="section-kicker">Nuestros productos</div>
             <h2 class="section-title">Productos del apiario.</h2>
-            <p class="section-copy">
-              Conocé los productos que ofrecemos desde La Ruda. Si necesitás más información
-              sobre presentaciones, disponibilidad o formas de compra, escribinos y te asesoramos.
-            </p>
           </div>
         </div>
 
@@ -1050,11 +1028,11 @@
         <div class="contact-wrap reveal">
           <div class="contact-copy">
             <div class="section-kicker">Contacto</div>
-            <h2 class="section-title">¿Querés consultarnos algo?</h2>
+            <h2 class="section-title">¿Tenés alguna consulta?</h2>
             <p>
-              Si querés conocer más sobre un producto, consultar disponibilidad o simplemente
-              hacernos una pregunta, escribinos por WhatsApp o completá el formulario.
-              Te respondemos de forma directa.
+              Podés consultarnos por productos, cantidades, disponibilidad, envíos o cualquier
+              otra duda que tengas. Escribinos con confianza: tu consulta no molesta. Podés
+              hacerlo por WhatsApp o dejarnos tu mensaje en el formulario.
             </p>
 
             <a class="button button-primary" id="generalWhatsAppButton" href="#" target="_blank" rel="noopener">
@@ -1063,7 +1041,7 @@
 
             <div class="contact-details">
               <span>🐝 Apiario La Ruda</span>
-              <span>📍 Argentina</span>
+              <span>📍 Ranchos, Provincia de Buenos Aires, Argentina</span>
               <a href="https://wa.me/5491126960110" target="_blank" rel="noopener" aria-label="Escribir a Apiario La Ruda por WhatsApp">💬 +54 9 11 2696-0110</a>
               <a href="mailto:apiariolaruda@gmail.com" aria-label="Enviar un email a Apiario La Ruda">✉️ apiariolaruda@gmail.com</a>
             </div>
