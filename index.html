@@ -324,15 +324,85 @@
       border-radius: 50%;
     }
 
-    .hero-logo {
+    .hero-logo-wrap {
+      position: relative;
+      z-index: 2;
       width: min(100%, 500px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      animation: float 5.2s ease-in-out infinite;
+    }
+
+    .hero-logo {
+      width: 100%;
+      height: 100%;
       aspect-ratio: 1;
       object-fit: cover;
       border-radius: 50%;
       box-shadow: var(--shadow);
-      position: relative;
-      z-index: 2;
-      animation: float 5.2s ease-in-out infinite;
+      transition: transform .32s cubic-bezier(.2,.8,.2,1), box-shadow .32s ease;
+    }
+
+    .hero-logo-wrap:hover .hero-logo {
+      transform: translateY(-5px) rotate(-1.4deg) scale(1.018);
+      box-shadow: 0 24px 58px rgba(62, 63, 41, 0.19);
+    }
+
+    .logo-bee {
+      --tx: 0px;
+      --ty: 0px;
+      --rot: 0deg;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 18px;
+      height: 12px;
+      z-index: 4;
+      opacity: 0;
+      pointer-events: none;
+      border-radius: 50% 50% 45% 45%;
+      background: repeating-linear-gradient(90deg, #d8a22a 0 5px, #2f3027 5px 8px);
+      box-shadow: 0 2px 5px rgba(47,48,39,.16);
+      transform: translate(-50%, -50%) scale(.4) rotate(var(--rot));
+    }
+
+    .logo-bee::before,
+    .logo-bee::after {
+      content: "";
+      position: absolute;
+      top: -5px;
+      width: 9px;
+      height: 7px;
+      border: 1px solid rgba(79,81,53,.28);
+      border-radius: 70% 70% 55% 55%;
+      background: rgba(255,255,255,.72);
+    }
+
+    .logo-bee::before { left: 0; transform: rotate(-28deg); }
+    .logo-bee::after { right: 0; transform: rotate(28deg); }
+
+    .hero-logo-wrap:hover .logo-bee {
+      animation: beeBurst .78s cubic-bezier(.18,.72,.22,1) forwards;
+    }
+
+    .hero-logo-wrap:hover .logo-bee:nth-of-type(1) { --tx: -155px; --ty: -138px; --rot: -24deg; animation-delay: .01s; }
+    .hero-logo-wrap:hover .logo-bee:nth-of-type(2) { --tx: 145px; --ty: -124px; --rot: 20deg; animation-delay: .05s; }
+    .hero-logo-wrap:hover .logo-bee:nth-of-type(3) { --tx: 174px; --ty: 12px; --rot: 7deg; animation-delay: .09s; }
+    .hero-logo-wrap:hover .logo-bee:nth-of-type(4) { --tx: -168px; --ty: 40px; --rot: -8deg; animation-delay: .12s; }
+    .hero-logo-wrap:hover .logo-bee:nth-of-type(5) { --tx: 98px; --ty: 146px; --rot: 28deg; animation-delay: .16s; }
+    .hero-logo-wrap:hover .logo-bee:nth-of-type(6) { --tx: -82px; --ty: 152px; --rot: -30deg; animation-delay: .19s; }
+
+    @keyframes beeBurst {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(.35) rotate(var(--rot));
+      }
+      22% { opacity: 1; }
+      72% { opacity: 1; }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1) rotate(calc(var(--rot) + 15deg));
+      }
     }
 
     @keyframes float {
@@ -577,17 +647,37 @@
       margin-top: 28px;
     }
 
-    .contact-details a,
-    .contact-details span {
+    .contact-details .contact-name {
       display: flex;
       align-items: center;
-      gap: 10px;
       color: white;
       font-size: .95rem;
+      font-weight: 700;
+    }
+
+    .contact-detail-button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 46px;
+      padding: 11px 15px;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 14px;
+      color: white;
+      background: rgba(255,255,255,.07);
+      font-size: .95rem;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .contact-detail-button:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.15);
+      border-color: rgba(255,255,255,.48);
+      box-shadow: 0 9px 20px rgba(31,31,24,.13);
     }
 
     .form-card {
-      min-height: 760px;
+      min-height: 940px;
       overflow: hidden;
       border: 1px solid rgba(79, 81, 53, .10);
       border-radius: 22px;
@@ -599,14 +689,14 @@
 
     .form-card iframe {
       width: 100%;
-      height: 760px;
+      height: 940px;
       border: 0;
       display: block;
       background: #fff;
     }
 
     .form-placeholder {
-      min-height: 760px;
+      min-height: 940px;
       padding: 44px 32px;
       display: grid;
       place-items: center;
@@ -916,11 +1006,11 @@
 
       .form-card,
       .form-placeholder {
-        min-height: 700px;
+        min-height: 880px;
       }
 
       .form-card iframe {
-        height: 700px;
+        height: 880px;
       }
 
       .footer-row {
@@ -986,11 +1076,19 @@
 
         <div class="hero-visual reveal">
           <div class="hero-orbit" aria-hidden="true"></div>
-          <img
-            class="hero-logo"
-            src="assets/logo-redondo.jpg"
-            alt="Ilustración de colmena y flores de Apiario La Ruda"
-          />
+          <div class="hero-logo-wrap">
+            <img
+              class="hero-logo"
+              src="assets/logo-redondo.jpg"
+              alt="Ilustración de colmena y flores de Apiario La Ruda"
+            />
+            <span class="logo-bee" aria-hidden="true"></span>
+            <span class="logo-bee" aria-hidden="true"></span>
+            <span class="logo-bee" aria-hidden="true"></span>
+            <span class="logo-bee" aria-hidden="true"></span>
+            <span class="logo-bee" aria-hidden="true"></span>
+            <span class="logo-bee" aria-hidden="true"></span>
+          </div>
         </div>
       </div>
     </section>
@@ -1059,10 +1157,10 @@
             </a>
 
             <div class="contact-details">
-              <span>🐝 Apiario La Ruda</span>
-              <span>📍 Ranchos, Provincia de Buenos Aires, Argentina</span>
-              <a href="https://wa.me/5491126960110" target="_blank" rel="noopener" aria-label="Escribir a Apiario La Ruda por WhatsApp">💬 +54 9 11 2696-0110</a>
-              <a href="mailto:apiariolaruda@gmail.com" aria-label="Enviar un email a Apiario La Ruda">✉️ apiariolaruda@gmail.com</a>
+              <span class="contact-name">Apiario La Ruda</span>
+              <a class="contact-detail-button" href="https://www.google.com/maps/search/?api=1&query=Ranchos%2C+Provincia+de+Buenos+Aires%2C+Argentina" target="_blank" rel="noopener" aria-label="Ver ubicación de Apiario La Ruda">Ranchos, Provincia de Buenos Aires, Argentina</a>
+              <a class="contact-detail-button" href="https://wa.me/5491126960110" target="_blank" rel="noopener" aria-label="Escribir a Apiario La Ruda por WhatsApp">+54 9 11 2696-0110</a>
+              <a class="contact-detail-button" href="mailto:apiariolaruda@gmail.com" aria-label="Enviar un email a Apiario La Ruda">apiariolaruda@gmail.com</a>
             </div>
           </div>
 
