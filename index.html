@@ -423,6 +423,26 @@
       margin-bottom: 34px;
     }
 
+    .product-categories {
+      display: grid;
+      gap: 52px;
+    }
+
+    .product-category {
+      display: grid;
+      gap: 20px;
+    }
+
+    .product-category-title {
+      margin: 0;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--olive-dark);
+      font-size: clamp(1.55rem, 3vw, 2rem);
+      line-height: 1.15;
+    }
+
     .product-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1019,7 +1039,7 @@
           </div>
         </div>
 
-        <div class="product-grid" id="productGrid"></div>
+        <div class="product-categories" id="productGrid"></div>
       </div>
     </section>
 
@@ -1123,57 +1143,65 @@
     const products = [
       {
         id: 1,
-        name: "Producto 1",
-        category: "Apiario La Ruda",
-        description: "Descripción breve del producto. Contá qué es, para qué se usa y su principal característica.",
+        name: "Miel 1 kg",
+        category: "Productos",
+        description: "Miel del apiario en presentación de 1 kg. Consultanos por disponibilidad y entregas.",
         image: "assets/logo-redondo.jpg",
         buyUrl: ""
       },
       {
         id: 2,
-        name: "Producto 2",
-        category: "Apiario La Ruda",
-        description: "Descripción breve del producto. Podés cambiar este texto libremente.",
+        name: "Miel 500 g",
+        category: "Productos",
+        description: "Miel del apiario en presentación de 500 g. Consultanos por disponibilidad y entregas.",
         image: "assets/logo-redondo.jpg",
         buyUrl: ""
       },
       {
         id: 3,
-        name: "Producto 3",
-        category: "Apiario La Ruda",
-        description: "Descripción breve del producto. Agregá presentación, tamaño o detalle útil.",
+        name: "Núcleo Baby",
+        category: "Insumos apícolas",
+        description: "Núcleo Baby para uso apícola. Consultanos por características, disponibilidad y cantidades.",
         image: "assets/logo-redondo.jpg",
         buyUrl: ""
       },
       {
         id: 4,
-        name: "Producto 4",
-        category: "Apiario La Ruda",
-        description: "Descripción breve del producto. Mantenela corta para que la tarjeta sea fácil de leer.",
+        name: "Alimentador externo",
+        category: "Insumos apícolas",
+        description: "Alimentador externo para el manejo del apiario. Consultanos por disponibilidad y cantidades.",
         image: "assets/logo-redondo.jpg",
         buyUrl: ""
       },
       {
         id: 5,
-        name: "Producto 5",
-        category: "Apiario La Ruda",
-        description: "Descripción breve del producto. El botón Consultar genera el mensaje automáticamente.",
+        name: "Jaula tipo Belton",
+        category: "Insumos apícolas",
+        description: "Jaula tipo Belton. Consultanos por disponibilidad, cantidades y forma de entrega.",
         image: "assets/logo-redondo.jpg",
         buyUrl: ""
       },
       {
         id: 6,
-        name: "Producto 6",
-        category: "Apiario La Ruda",
-        description: "Descripción breve del producto. Podés usar una foto diferente en cada tarjeta.",
+        name: "Reina fecundada",
+        category: "Material vivo",
+        description: "Reina fecundada. Consultanos por disponibilidad, fechas y condiciones de entrega.",
         image: "assets/logo-redondo.jpg",
         buyUrl: ""
       },
       {
         id: 7,
-        name: "Producto 7",
-        category: "Apiario La Ruda",
-        description: "Descripción breve del producto. El link Comprar puede apuntar a tu tienda o publicación.",
+        name: "Núcleo Baby",
+        category: "Material vivo",
+        description: "Núcleo Baby como material vivo. Consultanos por disponibilidad, cantidades y condiciones de entrega.",
+        image: "assets/logo-redondo.jpg",
+        buyUrl: ""
+      },
+      {
+        id: 8,
+        name: "Celda real",
+        category: "Material vivo",
+        description: "Celdas reales disponibles según producción. Consultanos por fechas, cantidades y entrega.",
         image: "assets/logo-redondo.jpg",
         buyUrl: ""
       }
@@ -1222,39 +1250,52 @@
     }
 
     function renderProducts() {
-      productGrid.innerHTML = products.map((product, index) => `
-        <article class="product-card reveal" style="transition-delay:${Math.min(index * 60, 240)}ms">
-          <button
-            class="product-image-button"
-            type="button"
-            aria-label="Ver ${escapeHtml(product.name)}"
-            data-open-product="${product.id}"
-          >
-            <img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" loading="lazy" />
-            <span class="product-image-label">${escapeHtml(product.category || "Producto")}</span>
-          </button>
+      const categoryOrder = ["Productos", "Insumos apícolas", "Material vivo"];
 
-          <div class="product-body">
-            <h3 class="product-title">${escapeHtml(product.name)}</h3>
-            <p class="product-description">${escapeHtml(product.description)}</p>
+      productGrid.innerHTML = categoryOrder.map((category, categoryIndex) => {
+        const categoryProducts = products.filter(product => product.category === category);
 
-            <div class="product-actions">
-              <a
-                class="button button-primary"
-                href="${escapeAttr(getBuyUrl(product))}"
-                ${getBuyUrl(product).startsWith("http") ? 'target="_blank" rel="noopener"' : ""}
-              >Comprar</a>
+        return `
+          <div class="product-category reveal" style="transition-delay:${Math.min(categoryIndex * 70, 140)}ms">
+            <h3 class="product-category-title">${escapeHtml(category)}</h3>
+            <div class="product-grid">
+              ${categoryProducts.map((product, index) => `
+                <article class="product-card">
+                  <button
+                    class="product-image-button"
+                    type="button"
+                    aria-label="Ver ${escapeHtml(product.name)}"
+                    data-open-product="${product.id}"
+                  >
+                    <img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" loading="lazy" />
+                    <span class="product-image-label">${escapeHtml(product.category)}</span>
+                  </button>
 
-              <a
-                class="button button-secondary"
-                href="${escapeAttr(whatsappUrl(productQuestion(product)))}"
-                target="_blank"
-                rel="noopener"
-              >Consultar</a>
+                  <div class="product-body">
+                    <h3 class="product-title">${escapeHtml(product.name)}</h3>
+                    <p class="product-description">${escapeHtml(product.description)}</p>
+
+                    <div class="product-actions">
+                      <a
+                        class="button button-primary"
+                        href="${escapeAttr(getBuyUrl(product))}"
+                        ${getBuyUrl(product).startsWith("http") ? 'target="_blank" rel="noopener"' : ""}
+                      >Comprar</a>
+
+                      <a
+                        class="button button-secondary"
+                        href="${escapeAttr(whatsappUrl(productQuestion(product)))}"
+                        target="_blank"
+                        rel="noopener"
+                      >Consultar</a>
+                    </div>
+                  </div>
+                </article>
+              `).join("")}
             </div>
           </div>
-        </article>
-      `).join("");
+        `;
+      }).join("");
 
       document.querySelectorAll("[data-open-product]").forEach(button => {
         button.addEventListener("click", () => {
