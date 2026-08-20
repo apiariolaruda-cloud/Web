@@ -572,23 +572,26 @@
     }
 
     .form-card {
-      min-height: 560px;
+      min-height: 760px;
       overflow: hidden;
+      border: 1px solid rgba(79, 81, 53, .10);
       border-radius: 22px;
       background: #fff;
       color: var(--text);
       position: relative;
+      box-shadow: 0 10px 28px rgba(31, 31, 24, .08);
     }
 
     .form-card iframe {
       width: 100%;
-      min-height: 620px;
+      height: 760px;
       border: 0;
       display: block;
+      background: #fff;
     }
 
     .form-placeholder {
-      min-height: 560px;
+      min-height: 760px;
       padding: 44px 32px;
       display: grid;
       place-items: center;
@@ -599,7 +602,7 @@
     }
 
     .form-placeholder-inner {
-      max-width: 470px;
+      width: min(100%, 470px);
     }
 
     .form-placeholder h3 {
@@ -611,17 +614,7 @@
 
     .form-placeholder p {
       color: var(--muted);
-      margin: 0 0 22px;
-    }
-
-    .mini-code {
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: #f6f4ed;
-      color: #555844;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: .82rem;
-      word-break: break-all;
+      margin: 0;
     }
 
     /* FOOTER */
@@ -895,7 +888,11 @@
 
       .form-card,
       .form-placeholder {
-        min-height: 480px;
+        min-height: 700px;
+      }
+
+      .form-card iframe {
+        height: 700px;
       }
 
       .footer-row {
@@ -1049,7 +1046,8 @@
           <div class="form-card" id="formContainer">
             <div class="form-placeholder">
               <div class="form-placeholder-inner">
-                <div class="mini-code"><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSezMQhULSo9zj-pfVkFbNAbip5PvW7H_fzwvH44hA2kS6SdZQ/viewform?embedded=true" width="640" height="714" frameborder="0" marginheight="0" marginwidth="0">Cargando…</iframe></div>
+                <h3>Cargando formulario…</h3>
+                <p>En unos segundos vas a poder completar tu consulta desde acá.</p>
               </div>
             </div>
           </div>
@@ -1116,7 +1114,7 @@
     // Pegá aquí la URL "embed" de Google Forms.
     // Ejemplo:
     // https://docs.google.com/forms/d/e/XXXXXXXX/viewform?embedded=true
-    const GOOGLE_FORM_EMBED_URL = "";
+    const GOOGLE_FORM_EMBED_URL = "https://docs.google.com/forms/d/e/1FAIpQLSezMQhULSo9zj-pfVkFbNAbip5PvW7H_fzwvH44hA2kS6SdZQ/viewform?embedded=true";
 
     const products = [
       {
