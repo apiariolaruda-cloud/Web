@@ -1355,7 +1355,7 @@
     }
 
     function renderProducts() {
-      const categoryOrder = ["Productos", "Insumos apícolas", "Material vivo"];
+      const categoryOrder = ["Productos", "Insumos apícolas", "Material vivo - A pedido"];
 
       productGrid.innerHTML = categoryOrder.map((category, categoryIndex) => {
         const categoryProducts = products.filter(product => product.category === category);
