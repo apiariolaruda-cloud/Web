@@ -879,8 +879,21 @@
 
     /* MOBILE */
     @media (max-width: 900px) {
+      html {
+        scroll-padding-top: 76px;
+      }
+
+      .container {
+        width: min(calc(100% - 36px), var(--max));
+      }
+
+      .section {
+        padding: 76px 0;
+      }
+
       .hero {
         min-height: auto;
+        padding: 46px 0 62px;
       }
 
       .hero-grid,
@@ -888,6 +901,10 @@
       .contact-wrap,
       .modal-content {
         grid-template-columns: 1fr;
+      }
+
+      .hero-grid {
+        gap: 42px;
       }
 
       .hero-copy {
@@ -903,6 +920,7 @@
       }
 
       .hero p {
+        max-width: 680px;
         margin-inline: auto;
       }
 
@@ -914,21 +932,33 @@
         min-height: auto;
       }
 
+      .hero-logo-wrap {
+        width: min(76vw, 460px);
+      }
+
       .hero-orbit {
-        width: min(88vw, 470px);
-        height: min(88vw, 470px);
+        width: min(82vw, 490px);
+        height: min(82vw, 490px);
       }
 
       .product-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .about-grid {
-        gap: 34px;
+        gap: 38px;
+      }
+
+      .contact-wrap {
+        gap: 20px;
       }
 
       .contact-copy {
-        padding: 20px 12px 10px;
+        padding: 22px 16px 12px;
+      }
+
+      .modal-panel {
+        width: min(700px, 100%);
       }
 
       .modal-image {
@@ -938,24 +968,79 @@
     }
 
     @media (max-width: 720px) {
+      html {
+        scroll-padding-top: 68px;
+      }
+
+      body {
+        overflow-x: hidden;
+      }
+
+      .container {
+        width: min(calc(100% - 28px), var(--max));
+      }
+
       .section {
-        padding: 68px 0;
+        padding: 58px 0;
+      }
+
+      .section-title {
+        margin-bottom: 12px;
+        font-size: clamp(2rem, 10vw, 2.65rem);
+        line-height: 1.04;
+      }
+
+      .section-kicker {
+        gap: 7px;
+        margin-bottom: 10px;
+        font-size: .70rem;
+        letter-spacing: .14em;
+      }
+
+      .section-kicker::before,
+      .section-kicker::after {
+        width: 16px;
+      }
+
+      /* Mobile header */
+      .nav {
+        min-height: 68px;
+        gap: 12px;
+      }
+
+      .brand {
+        gap: 9px;
+      }
+
+      .brand > img {
+        width: 42px;
+        height: 42px;
+      }
+
+      .brand-wordmark {
+        width: 96px;
+      }
+
+      .brand-tagline {
+        font-size: .56rem;
+        letter-spacing: .16em;
       }
 
       .nav-links {
         position: absolute;
-        left: 16px;
-        right: 16px;
-        top: 70px;
+        left: 14px;
+        right: 14px;
+        top: calc(100% + 8px);
         display: none;
         flex-direction: column;
         align-items: stretch;
         gap: 4px;
-        padding: 14px;
+        padding: 10px;
         border: 1px solid var(--line);
         border-radius: 18px;
-        background: rgba(255,250,243,.98);
+        background: rgba(255,250,243,.985);
         box-shadow: var(--shadow);
+        backdrop-filter: blur(18px);
       }
 
       .nav-links.open {
@@ -963,8 +1048,17 @@
       }
 
       .nav-links a {
-        padding: 11px 12px;
-        border-radius: 10px;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        padding: 11px 13px;
+        border-radius: 11px;
+        font-size: .98rem;
+      }
+
+      .nav-links .nav-cta {
+        justify-content: center;
+        margin-top: 3px;
       }
 
       .nav-links a:hover {
@@ -974,59 +1068,468 @@
       .menu-button {
         display: inline-grid;
         place-items: center;
+        flex: 0 0 auto;
+        width: 46px;
+        height: 46px;
+        font-size: 1.22rem;
       }
 
+      /* Mobile hero */
       .hero {
-        padding-top: 34px;
+        padding: 32px 0 48px;
       }
 
       .hero-grid {
-        gap: 34px;
+        gap: 30px;
+      }
+
+      .eyebrow {
+        max-width: 100%;
+        justify-content: center;
+        padding: 7px 11px;
+        font-size: .68rem;
+        letter-spacing: .085em;
+        line-height: 1.35;
+        white-space: normal;
+      }
+
+      .hero h1 {
+        margin: 18px 0 16px;
+        gap: 5px;
+      }
+
+      .hero-apiario {
+        font-size: clamp(1rem, 4.4vw, 1.25rem);
+        letter-spacing: .18em;
       }
 
       .hero-wordmark {
-        width: min(92vw, 470px);
+        width: min(92%, 430px);
       }
 
+      .hero p {
+        max-width: 34rem;
+        font-size: clamp(1rem, 4.3vw, 1.08rem);
+        line-height: 1.58;
+      }
+
+      .hero-actions {
+        width: 100%;
+        gap: 10px;
+        margin-top: 24px;
+      }
+
+      .hero-actions .button {
+        flex: 1 1 180px;
+        min-height: 50px;
+      }
+
+      .hero-visual {
+        width: 100%;
+      }
+
+      .hero-logo-wrap {
+        width: min(80vw, 360px);
+      }
+
+      .hero-orbit {
+        width: min(88vw, 392px);
+        height: min(88vw, 392px);
+      }
+
+      /* Mobile about */
+      .about-grid {
+        gap: 30px;
+      }
+
+      .about-card,
+      .about-card img {
+        min-height: 330px;
+      }
+
+      .about-card {
+        border-radius: 24px;
+      }
+
+      .about-badge {
+        left: 14px;
+        bottom: 14px;
+        width: calc(100% - 28px);
+        padding: 16px;
+        border-radius: 15px;
+        line-height: 1.4;
+      }
+
+      .about-badge strong {
+        font-size: 1.32rem;
+        line-height: 1.12;
+        margin-bottom: 5px;
+      }
+
+      .about-badge span {
+        display: block;
+        font-size: .92rem;
+      }
+
+      .about-copy p {
+        font-size: 1rem;
+        line-height: 1.65;
+      }
+
+      .pill-row {
+        gap: 8px;
+        margin-top: 22px;
+      }
+
+      .pill {
+        padding: 8px 11px;
+        font-size: .82rem;
+      }
+
+      /* Mobile products */
       .products-header {
         display: block;
+        margin-bottom: 28px;
+      }
+
+      .product-categories {
+        gap: 42px;
+      }
+
+      .product-category {
+        gap: 16px;
+      }
+
+      .product-category-title {
+        padding-bottom: 10px;
+        font-size: 1.58rem;
       }
 
       .product-grid {
         grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .product-card {
+        border-radius: 20px;
+      }
+
+      .product-body {
+        padding: 18px;
+      }
+
+      .product-title {
+        font-size: 1.42rem;
+      }
+
+      .product-description {
+        margin-bottom: 18px;
+        font-size: .95rem;
+        line-height: 1.55;
       }
 
       .product-actions {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
       }
 
+      .product-actions .button {
+        min-height: 48px;
+        padding-inline: 10px;
+        font-size: .88rem;
+      }
+
+      /* Mobile contact */
       .contact-wrap {
-        padding: 16px;
+        padding: 12px;
+        border-radius: 24px;
       }
 
-      .form-card,
-      .form-placeholder {
-        min-height: 880px;
+      .contact-copy {
+        padding: 20px 8px 12px;
+      }
+
+      .contact-copy p {
+        font-size: .98rem;
+        line-height: 1.62;
+      }
+
+      .contact-copy > .button {
+        width: 100%;
+        min-height: 50px;
+      }
+
+      .contact-details {
+        gap: 9px;
+        margin-top: 22px;
+      }
+
+      .contact-detail-button {
+        min-height: 50px;
+        padding: 12px 13px;
+        font-size: .92rem;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+      }
+
+      .form-card {
+        width: 100%;
+        min-width: 0;
+        min-height: 900px;
+        border-radius: 18px;
       }
 
       .form-card iframe {
-        height: 880px;
+        width: 100%;
+        height: 900px;
+        min-width: 0;
+      }
+
+      .form-placeholder {
+        min-height: 900px;
+        padding: 32px 20px;
+      }
+
+      .form-placeholder h3 {
+        font-size: 1.65rem;
+      }
+
+      /* Mobile footer */
+      footer {
+        padding: 26px 0 calc(34px + env(safe-area-inset-bottom));
       }
 
       .footer-row {
         align-items: flex-start;
         flex-direction: column;
+        gap: 14px;
+        font-size: .83rem;
+        line-height: 1.5;
+      }
+
+      /* Mobile modal */
+      .modal {
+        padding: 10px;
+      }
+
+      .modal-panel {
+        width: 100%;
+        max-height: calc(100dvh - 20px);
+        border-radius: 20px;
+      }
+
+      .modal-close {
+        position: sticky;
+        float: right;
+        right: 10px;
+        top: 10px;
+        z-index: 4;
+        width: 44px;
+        height: 44px;
+        margin: 10px 10px -54px 0;
+      }
+
+      .modal-image {
+        min-height: 0;
+        height: auto;
+        max-height: none;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
       }
 
       .modal-copy {
-        padding: 34px 24px 28px;
+        padding: 28px 20px 22px;
       }
 
+      .modal-copy .tag {
+        font-size: .70rem;
+      }
+
+      .modal-copy h3 {
+        font-size: clamp(1.85rem, 8.5vw, 2.25rem);
+      }
+
+      .modal-copy p {
+        margin-bottom: 20px;
+        font-size: .96rem;
+        line-height: 1.55;
+      }
+
+      .modal-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .modal-actions .button {
+        width: 100%;
+        min-height: 48px;
+        padding-inline: 12px;
+      }
+
+      /* Floating WhatsApp with mobile safe area */
       .whatsapp-float {
-        right: 16px;
-        bottom: 16px;
+        right: 14px;
+        bottom: calc(14px + env(safe-area-inset-bottom));
+        width: 56px;
+        height: 56px;
       }
     }
+
+    @media (max-width: 420px) {
+      .container {
+        width: min(calc(100% - 22px), var(--max));
+      }
+
+      .section {
+        padding: 52px 0;
+      }
+
+      .nav-links {
+        left: 11px;
+        right: 11px;
+      }
+
+      .hero {
+        padding-top: 26px;
+      }
+
+      .eyebrow {
+        font-size: .64rem;
+        letter-spacing: .065em;
+      }
+
+      .hero-wordmark {
+        width: 96%;
+      }
+
+      .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions .button {
+        width: 100%;
+      }
+
+      .hero-logo-wrap {
+        width: min(82vw, 330px);
+      }
+
+      .hero-orbit {
+        width: min(91vw, 360px);
+        height: min(91vw, 360px);
+      }
+
+      .about-card,
+      .about-card img {
+        min-height: 290px;
+      }
+
+      .about-badge {
+        left: 10px;
+        bottom: 10px;
+        width: calc(100% - 20px);
+        padding: 14px;
+      }
+
+      .about-badge strong {
+        font-size: 1.2rem;
+      }
+
+      .product-image-label {
+        top: 11px;
+        left: 11px;
+      }
+
+      .product-actions,
+      .modal-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-wrap {
+        padding: 10px;
+      }
+
+      .contact-copy {
+        padding-inline: 6px;
+      }
+
+      .form-card,
+      .form-placeholder {
+        min-height: 920px;
+      }
+
+      .form-card iframe {
+        height: 920px;
+      }
+
+      .footer-wordmark {
+        width: 88px;
+      }
+    }
+
+    @media (max-width: 340px) {
+      .brand-wordmark {
+        width: 82px;
+      }
+
+      .brand > img {
+        width: 38px;
+        height: 38px;
+      }
+
+      .menu-button {
+        width: 42px;
+        height: 42px;
+      }
+
+      .eyebrow {
+        padding-inline: 8px;
+        font-size: .60rem;
+      }
+
+      .hero-apiario {
+        letter-spacing: .14em;
+      }
+
+      .section-title {
+        font-size: 1.92rem;
+      }
+
+      .about-card,
+      .about-card img {
+        min-height: 270px;
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      .button:hover,
+      .product-card:hover,
+      .contact-detail-button:hover,
+      .whatsapp-float:hover,
+      .hero-logo-wrap:hover .hero-logo {
+        transform: none;
+      }
+
+      .hero-logo-wrap:hover .logo-bee {
+        animation: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
   </style>
 </head>
 
