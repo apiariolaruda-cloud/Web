@@ -199,6 +199,32 @@ $$;
 revoke all on function public.get_public_order(text) from public;
 grant execute on function public.get_public_order(text) to anon, authenticated;
 
+
+
+-- =============================================================
+-- KEEPALIVE PARA PLAN FREE
+--
+-- Esta función está pensada para ser llamada por un servicio externo
+-- (por ejemplo cron-job.org) varias veces al día. Hace una lectura mínima
+-- de la tabla de pedidos y NO crea, modifica ni elimina información.
+-- =============================================================
+
+create or replace function public.la_ruda_keepalive()
+returns jsonb
+language sql
+security definer
+stable
+set search_path = public
+as $$
+  select jsonb_build_object(
+    'ok', (select count(*) from public.orders) >= 0,
+    'checked_at', now()
+  );
+$$;
+
+revoke all on function public.la_ruda_keepalive() from public;
+grant execute on function public.la_ruda_keepalive() to anon, authenticated;
+
 -- =============================================================
 -- FIN
 -- =============================================================

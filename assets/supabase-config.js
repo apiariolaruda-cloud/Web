@@ -8,7 +8,7 @@
   IMPORTANTE: la contraseña de administración NO se guarda en este archivo.
 */
 window.LA_RUDA_CONFIG = {
-  supabaseUrl: "PEGA_AQUI_TU_SUPABASE_URL",
+  supabaseUrl: "https://bfqqpniakxznbgfbektb.supabase.co",
   supabaseAnonKey: "PEGA_AQUI_TU_SUPABASE_ANON_KEY",
   adminUsername: "admin",
   adminEmail: "admin@apiariolaruda.local",

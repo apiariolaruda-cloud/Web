@@ -58,3 +58,19 @@ PRUEBA RECOMENDADA
 3. Copiar el link de seguimiento.
 4. Abrirlo en una ventana incógnita o en otro celular.
 5. Cambiar el estado en admin.html y volver a consultar el link.
+
+
+KEEPALIVE AUTOMATICO DE SUPABASE
+--------------------------------
+El archivo supabase_setup.sql ya incluye la función segura la_ruda_keepalive().
+Para generar actividad aunque no entre ningún cliente, configurar cron-job.org
+para llamar esa función cada 6 horas. Ver instrucciones completas en:
+
+  KEEPALIVE_SUPABASE.txt
+
+La consulta es solo lectura y no toca el contenido de los pedidos.
+
+
+PROYECTO SUPABASE CONFIGURADO
+Project URL: https://bfqqpniakxznbgfbektb.supabase.co
+Falta únicamente pegar la Publishable key en assets/supabase-config.js.
