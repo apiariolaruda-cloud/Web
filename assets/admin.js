@@ -23,15 +23,12 @@
   const reinaStageField = document.getElementById("reinaStageField");
   const toast = document.getElementById("toast");
   const addItemButton = document.getElementById("addItemButton");
-  const editOrderButton = document.getElementById("editOrderButton");
   const saveOrderButton = document.getElementById("saveOrderButton");
   const cancelOrderButton = document.getElementById("cancelOrderButton");
-  const deleteOrderButton = document.getElementById("deleteOrderButton");
   const orderTotalField = document.getElementById("orderTotal");
 
   let orders = [];
   let currentOrder = null;
-  let editingDetails = true;
   let toastTimer = null;
 
   function showLoginMessage(text, type = "error") {
@@ -135,7 +132,7 @@
     itemsEditor.appendChild(itemTemplate(item));
     syncPreparationControls();
     refreshCalculatedTotal();
-    applyEditMode();
+    applyOrderMode();
   }
 
   function collectItems() {
@@ -311,46 +308,76 @@
       </div>`;
   }
 
-  function applyEditMode() {
+  function renderReadOnlySummary(order) {
+    const summary = document.getElementById("orderReadOnlySummary");
+    const items = [...(order.order_items || [])].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    const itemsHtml = items.length
+      ? items.map(item => {
+          const qty = Number(item.quantity || 0);
+          const price = Number(item.unit_price || 0);
+          const lineTotal = qty * price;
+          return `
+            <div class="readonly-item-row">
+              <div>
+                <strong>${O.escapeHtml(item.description || "Artículo")}</strong>
+                <span>${O.escapeHtml(String(item.quantity || 0))} ${O.escapeHtml(item.unit || "u.")} × ${O.escapeHtml(O.formatMoney(price))}</span>
+              </div>
+              <strong>${O.escapeHtml(O.formatMoney(lineTotal))}</strong>
+            </div>`;
+        }).join("")
+      : '<div class="helper">Sin artículos cargados.</div>';
+
+    summary.innerHTML = `
+      <div class="readonly-summary-grid">
+        <div class="readonly-block">
+          <span>Comprador</span>
+          <strong>${O.escapeHtml(order.customer_name || "—")}</strong>
+          <small>${O.escapeHtml(order.customer_phone || "")}${order.customer_email ? ` · ${O.escapeHtml(order.customer_email)}` : ""}</small>
+        </div>
+        <div class="readonly-block">
+          <span>Entrega estimada</span>
+          <strong>${O.escapeHtml(O.formatDate(order.estimated_date))}</strong>
+          <small>${O.escapeHtml(order.delivery_method || "A coordinar")}</small>
+        </div>
+      </div>
+      <div class="readonly-items">
+        <div class="readonly-section-title">Artículos del pedido</div>
+        ${itemsHtml}
+        <div class="readonly-total-row">
+          <span>Total del pedido</span>
+          <strong>${O.escapeHtml(O.formatMoney(Number(order.total || 0)))}</strong>
+        </div>
+      </div>
+      ${order.public_note ? `<div class="readonly-note"><span>Nota visible para el cliente</span><p>${O.escapeHtml(order.public_note)}</p></div>` : ""}
+      ${order.internal_note ? `<div class="readonly-note internal"><span>Nota interna</span><p>${O.escapeHtml(order.internal_note)}</p></div>` : ""}
+    `;
+  }
+
+  function applyOrderMode() {
     const existing = Boolean(currentOrder?.id);
-    const lockDetails = existing && !editingDetails;
-    const detailIds = [
-      "customerName", "customerPhone", "customerEmail",
-      "estimatedDateInput", "deliveryMethodInput",
-      "publicNoteInput", "internalNoteInput"
-    ];
+    const readOnlySummary = document.getElementById("orderReadOnlySummary");
+    const itemsSection = document.getElementById("itemsSection");
 
-    detailIds.forEach(id => {
-      const element = document.getElementById(id);
-      if (element) element.disabled = lockDetails;
-    });
+    // Un pedido ya creado es inmutable desde esta pantalla: solo se cambian estados.
+    itemsSection.hidden = existing;
+    readOnlySummary.hidden = !existing;
+    addItemButton.hidden = existing;
 
-    itemsEditor.querySelectorAll("select, input, button.remove-item").forEach(element => {
-      element.disabled = lockDetails;
-    });
-
-    // Los estados siempre pueden actualizarse sin entrar a edición completa.
     orderStatus.disabled = false;
     nucleoStage.disabled = false;
     reinaStage.disabled = false;
     orderTotalField.readOnly = true;
 
-    addItemButton.hidden = lockDetails;
-    editOrderButton.hidden = !existing || editingDetails;
-    deleteOrderButton.hidden = !existing || !editingDetails;
-
     if (!existing) {
       saveOrderButton.textContent = "Crear pedido";
       cancelOrderButton.textContent = "Cancelar";
-    } else if (editingDetails) {
-      saveOrderButton.textContent = "Guardar cambios";
-      cancelOrderButton.textContent = "Cancelar edición";
     } else {
       saveOrderButton.textContent = "Guardar estado";
       cancelOrderButton.textContent = "Cerrar";
+      renderReadOnlySummary(currentOrder);
     }
 
-    orderModal.classList.toggle("order-view-mode", lockDetails);
+    orderModal.classList.toggle("order-view-mode", existing);
   }
 
   function resetForm() {
@@ -366,19 +393,16 @@
     document.getElementById("orderTools").hidden = true;
     document.getElementById("historySection").hidden = true;
     document.getElementById("paymentAuditSection").hidden = true;
-    editOrderButton.hidden = true;
-    deleteOrderButton.hidden = true;
     orderTotalField.dataset.rawValue = "0";
     orderTotalField.value = O.formatMoney(0);
   }
 
   function openNewOrder() {
     currentOrder = null;
-    editingDetails = true;
     resetForm();
     document.getElementById("orderModalTitle").textContent = "Nuevo pedido";
     document.getElementById("orderModalSubtitle").textContent = "Seleccioná los artículos. El total se calcula automáticamente con los precios unitarios.";
-    applyEditMode();
+    applyOrderMode();
     openModal();
     setTimeout(() => document.getElementById("customerName").focus(), 50);
   }
@@ -415,26 +439,13 @@
   }
 
   function openOrderView(order) {
-    editingDetails = false;
     fillExistingOrder(order);
-    document.getElementById("orderModalSubtitle").textContent = "Consultá el pedido y actualizá sus estados. Para cambiar datos o artículos, usá “Editar pedido”.";
-    applyEditMode();
+    document.getElementById("orderModalSubtitle").textContent = "Pedido en modo consulta. Solo podés actualizar sus estados.";
+    applyOrderMode();
     openModal();
   }
 
-  function startEditOrder() {
-    if (!currentOrder) return;
-    editingDetails = true;
-    document.getElementById("orderModalSubtitle").textContent = "Edición completa habilitada: podés modificar datos, artículos, cantidades, precios y entrega.";
-    applyEditMode();
-    setTimeout(() => document.getElementById("customerName").focus(), 30);
-  }
-
   function cancelModalAction() {
-    if (currentOrder?.id && editingDetails) {
-      openOrderView(currentOrder);
-      return;
-    }
     closeModal();
   }
 
@@ -587,13 +598,21 @@
     if (!db) return;
 
     const draft = currentFormOrder();
-    if (!draft.customer_name || !draft.customer_phone) {
-      showToast("Completá nombre y WhatsApp.", "error");
-      return;
-    }
-    if (!draft.items.length) {
-      showToast("Seleccioná al menos un artículo del pedido.", "error");
-      return;
+    const isExisting = Boolean(draft.id);
+    if (!isExisting) {
+      if (!draft.customer_name || !draft.customer_phone) {
+        showToast("Completá nombre y WhatsApp.", "error");
+        return;
+      }
+      if (!draft.items.length) {
+        showToast("Seleccioná al menos un artículo del pedido.", "error");
+        return;
+      }
+      const missingPrice = draft.items.some(item => item.unit_price == null || !Number.isFinite(item.unit_price));
+      if (missingPrice) {
+        showToast("Cargá el precio unitario de todos los artículos.", "error");
+        return;
+      }
     }
     if (!validatePreparationBeforePayment(draft)) return;
 
@@ -603,8 +622,9 @@
     try {
       let savedOrder;
 
-      if (draft.id && !editingDetails) {
-        // Vista normal de un pedido existente: solamente se actualizan sus estados.
+      if (draft.id) {
+        // REGLA: después de crear un pedido, sus datos comerciales quedan bloqueados.
+        // Desde esta vista solo se actualizan estado general y preparaciones.
         const statusPayload = {
           status: draft.status,
           nucleo_stage: draft.nucleo_stage,
@@ -627,22 +647,14 @@
           public_note: draft.public_note,
           internal_note: draft.internal_note
         };
-
-        if (draft.id) {
-          const { data, error } = await db.from("orders").update(orderPayload).eq("id", draft.id).select().single();
-          if (error) throw error;
-          savedOrder = data;
-        } else {
-          const { data, error } = await db.from("orders").insert(orderPayload).select().single();
-          if (error) throw error;
-          savedOrder = data;
-        }
-
+        const { data, error } = await db.from("orders").insert(orderPayload).select().single();
+        if (error) throw error;
+        savedOrder = data;
         await saveItems(savedOrder.id, draft.items);
       }
 
       const wasNew = !draft.id;
-      const statusOnly = Boolean(draft.id && !editingDetails);
+      const statusOnly = Boolean(draft.id);
       await loadOrders();
 
       const fresh = orders.find(order => order.id === savedOrder.id);
@@ -651,37 +663,15 @@
 
       if (wasNew) showToast(`Pedido creado: ${savedOrder.tracking_code}`);
       else if (statusOnly) showToast("Estado del pedido actualizado.");
-      else showToast("Pedido actualizado.");
     } catch (error) {
       console.error(error);
       showToast(`No pudimos guardar el pedido: ${error?.message || "revisá Supabase"}.`, "error");
     } finally {
       saveOrderButton.disabled = false;
-      applyEditMode();
+      applyOrderMode();
     }
   }
 
-  async function deleteCurrentOrder() {
-    if (!currentOrder || !db) return;
-    const confirmed = window.confirm(`¿Eliminar definitivamente el pedido ${currentOrder.tracking_code}? Esta acción no se puede deshacer.`);
-    if (!confirmed) return;
-
-    const button = document.getElementById("deleteOrderButton");
-    button.disabled = true;
-    button.textContent = "Eliminando…";
-    const { error } = await db.from("orders").delete().eq("id", currentOrder.id);
-    button.disabled = false;
-    button.textContent = "Eliminar pedido";
-
-    if (error) {
-      console.error(error);
-      showToast("No se pudo eliminar el pedido.", "error");
-      return;
-    }
-    closeModal();
-    await loadOrders();
-    showToast("Pedido eliminado.");
-  }
 
   function savedAdminEmail() {
     return localStorage.getItem("la_ruda_admin_email") || String(cfg.adminEmail || "").trim();
@@ -807,8 +797,6 @@
   document.getElementById("closeOrderModal").addEventListener("click", closeModal);
   cancelOrderButton.addEventListener("click", cancelModalAction);
   addItemButton.addEventListener("click", () => addItem({ quantity: 1 }));
-  editOrderButton.addEventListener("click", startEditOrder);
-  deleteOrderButton.addEventListener("click", deleteCurrentOrder);
   orderForm.addEventListener("submit", saveOrder);
 
   orderModal.addEventListener("click", event => { if (event.target === orderModal) closeModal(); });

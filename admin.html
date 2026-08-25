@@ -90,17 +90,20 @@
 
       <form class="admin-panel-body" id="orderForm">
         <input type="hidden" id="orderId" />
-        <div class="form-grid">
-          <div class="field">
+
+        <section class="order-readonly-details" id="orderReadOnlySummary" hidden></section>
+
+        <div class="form-grid" id="orderEditableGrid">
+          <div class="field order-detail-field">
             <label class="label" for="customerName">Nombre del comprador *</label>
             <input class="input" id="customerName" required />
           </div>
-          <div class="field">
+          <div class="field order-detail-field">
             <label class="label" for="customerPhone">WhatsApp *</label>
             <input class="input" id="customerPhone" inputmode="tel" placeholder="5491126960110" required />
             <span class="hint">Ingresalo con código de país. Para Argentina: 549 + característica + número.</span>
           </div>
-          <div class="field">
+          <div class="field order-detail-field">
             <label class="label" for="customerEmail">Email</label>
             <input class="input" id="customerEmail" type="email" />
           </div>
@@ -118,11 +121,11 @@
             <select class="select" id="reinaStage"></select>
             <span class="hint">Se administra por separado cuando el pedido incluye reinas.</span>
           </div>
-          <div class="field">
+          <div class="field order-detail-field">
             <label class="label" for="estimatedDateInput">Fecha estimada</label>
             <input class="input" id="estimatedDateInput" type="date" />
           </div>
-          <div class="field">
+          <div class="field order-detail-field">
             <label class="label" for="deliveryMethodInput">Modalidad</label>
             <select class="select" id="deliveryMethodInput">
               <option value="A coordinar">A coordinar</option>
@@ -131,22 +134,22 @@
               <option value="Entrega coordinada">Entrega coordinada</option>
             </select>
           </div>
-          <div class="field">
+          <div class="field order-detail-field">
             <label class="label" for="orderTotal">Total calculado</label>
             <input class="input total-readonly" id="orderTotal" type="text" value="$ 0" readonly aria-readonly="true" />
             <span class="hint">Se calcula automáticamente con cantidad × precio unitario.</span>
           </div>
-          <div class="field full">
+          <div class="field full order-detail-field">
             <label class="label" for="publicNoteInput">Nota visible para el cliente</label>
             <textarea class="textarea" id="publicNoteInput" placeholder="Ej.: Nos comunicamos para coordinar día y horario de entrega."></textarea>
           </div>
-          <div class="field full">
+          <div class="field full order-detail-field">
             <label class="label" for="internalNoteInput">Nota interna</label>
             <textarea class="textarea" id="internalNoteInput" placeholder="Esta nota solo la ve administración."></textarea>
           </div>
         </div>
 
-        <div class="form-section">
+        <div class="form-section" id="itemsSection">
           <div class="form-section-head">
             <div>
               <h3>Artículos del pedido</h3>
@@ -184,8 +187,6 @@
         </div>
 
         <div class="form-actions">
-          <button class="button button-danger" id="deleteOrderButton" type="button" hidden>Eliminar pedido</button>
-          <button class="button button-soft" id="editOrderButton" type="button" hidden>Editar pedido</button>
           <button class="button button-secondary" id="cancelOrderButton" type="button">Cancelar</button>
           <button class="button button-primary" id="saveOrderButton" type="submit">Guardar pedido</button>
         </div>
@@ -195,7 +196,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="assets/orders-bundle.js?v=20260825-8"></script>
-  <script src="assets/admin.js?v=20260825-8"></script>
+  <script src="assets/orders-bundle.js?v=20260825-9"></script>
+  <script src="assets/admin.js?v=20260825-9"></script>
 </body>
 </html>

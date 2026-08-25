@@ -176,21 +176,21 @@
     document.getElementById("updatedText").textContent = order.updated_at ? `Actualizado ${O.formatDateTime(order.updated_at)}` : "";
     document.getElementById("estimatedDate").textContent = O.formatDate(order.estimated_date);
     document.getElementById("deliveryMethod").textContent = order.delivery_method || "A coordinar";
-    document.getElementById("publicTotal").textContent = Number(order.total || 0) > 0 ? O.formatMoney(Number(order.total)) : "A confirmar";
+    document.getElementById("publicTotal").textContent = O.formatMoney(Number(order.total || 0));
 
     const itemsList = document.getElementById("itemsList");
     itemsList.innerHTML = (order.items || []).length
       ? order.items.map(item => {
           const quantity = Number(item.quantity || 0);
           const unitPrice = item.unit_price == null ? null : Number(item.unit_price);
-          const lineTotal = unitPrice == null ? null : quantity * unitPrice;
+          const lineTotal = quantity * Number(unitPrice || 0);
           return `
             <div class="item-row public-item-row">
               <div class="public-item-main">
                 <span>${O.escapeHtml(item.description)}</span>
-                <small>${O.escapeHtml(item.quantity)} ${O.escapeHtml(item.unit || "u.")}${unitPrice == null ? "" : ` × ${O.escapeHtml(O.formatMoney(unitPrice))}`}</small>
+                <small>${O.escapeHtml(item.quantity)} ${O.escapeHtml(item.unit || "u.")} × ${O.escapeHtml(O.formatMoney(Number(unitPrice || 0)))}</small>
               </div>
-              <strong>${lineTotal == null ? `${O.escapeHtml(item.quantity)} ${O.escapeHtml(item.unit || "u.")}` : O.escapeHtml(O.formatMoney(lineTotal))}</strong>
+              <strong>${O.escapeHtml(O.formatMoney(lineTotal))}</strong>
             </div>`;
         }).join("")
       : '<div class="helper">Los artículos del pedido todavía no fueron detallados.</div>';

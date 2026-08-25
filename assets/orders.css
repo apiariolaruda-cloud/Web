@@ -572,3 +572,75 @@ footer { padding: 28px 0 38px; }
   .public-item-row { align-items: flex-start; }
   .public-item-row > strong { font-size: .86rem; }
 }
+
+
+/* V5 - pedidos creados en modo consulta real */
+.order-readonly-details {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.order-readonly-details[hidden] { display: none !important; }
+.readonly-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.readonly-block,
+.readonly-items,
+.readonly-note {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(119,121,79,.035);
+  padding: 15px 16px;
+}
+.readonly-block { display: grid; gap: 4px; }
+.readonly-block > span,
+.readonly-section-title,
+.readonly-note > span {
+  color: var(--muted);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.readonly-block > strong { color: var(--olive-dark); font-size: 1rem; }
+.readonly-block > small { color: var(--muted); font-size: .82rem; }
+.readonly-items { display: grid; gap: 9px; }
+.readonly-section-title { margin-bottom: 2px; }
+.readonly-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.readonly-item-row > div { display: grid; gap: 2px; }
+.readonly-item-row span { color: var(--muted); font-size: .8rem; }
+.readonly-item-row > strong { color: var(--olive-dark); white-space: nowrap; }
+.readonly-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-top: 7px;
+}
+.readonly-total-row span { font-weight: 800; }
+.readonly-total-row strong {
+  color: var(--olive-dark);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.35rem;
+}
+.readonly-note { display: grid; gap: 7px; }
+.readonly-note p { margin: 0; white-space: pre-wrap; }
+.readonly-note.internal { background: rgba(52,52,38,.035); }
+.order-view-mode .order-detail-field,
+.order-view-mode #itemsSection { display: none !important; }
+.order-view-mode #orderReadOnlySummary { display: grid !important; }
+@media (max-width: 680px) {
+  .readonly-summary-grid { grid-template-columns: 1fr; }
+  .readonly-item-row, .readonly-total-row { align-items: flex-start; }
+  .readonly-item-row { display: grid; gap: 5px; }
+  .readonly-total-row strong { text-align: right; }
+}
