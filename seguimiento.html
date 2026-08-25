@@ -19,8 +19,6 @@
         </span>
       </a>
       <div class="nav-actions">
-        <a class="nav-link secondary-hide" href="index.html#productos">Productos</a>
-        <a class="nav-link secondary-hide" href="admin.html">Administración</a>
         <a class="nav-link primary" href="index.html">Volver a la web</a>
       </div>
     </div>
@@ -50,7 +48,10 @@
           />
           <button class="button button-primary" id="trackingSubmit" type="submit">Buscar pedido</button>
         </form>
-        <div class="helper" id="trackingHelp">Ingresá exactamente el código que recibiste por WhatsApp.</div>
+        <div class="track-search-footer">
+          <div class="helper" id="trackingHelp">Ingresá exactamente el código que recibiste por WhatsApp.</div>
+          <a class="track-admin-link" href="admin.html">Administración</a>
+        </div>
       </section>
 
       <div class="message" id="trackingMessage" role="status" aria-live="polite"></div>
@@ -60,7 +61,6 @@
           <div>
             <div class="order-code" id="resultCode"></div>
             <h2 id="resultTitle"></h2>
-            <p id="resultIntro"></p>
             <div class="progress-wrap">
               <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
               <div class="progress-copy"><span id="progressText"></span><span id="updatedText"></span></div>
@@ -76,11 +76,11 @@
         <div class="order-grid">
           <div class="card order-info">
             <h3 class="card-title">Tu pedido</h3>
+            <div class="items-list items-list-first" id="itemsList"></div>
             <div class="info-list">
               <div class="info-row"><span>Entrega estimada</span><strong id="estimatedDate"></strong></div>
               <div class="info-row"><span>Modalidad</span><strong id="deliveryMethod"></strong></div>
             </div>
-            <div class="items-list" id="itemsList"></div>
             <div class="public-note" id="publicNote" hidden></div>
           </div>
 
@@ -93,6 +93,9 @@
         <div class="order-contact">
           <a class="button button-secondary" id="orderWhatsApp" href="#" target="_blank" rel="noopener">Consultar por este pedido</a>
         </div>
+      </section>
+      <section class="tracking-help-cta" aria-label="Ayuda por WhatsApp">
+        <a class="button button-whatsapp tracking-whatsapp-button" href="https://wa.me/5491126960110?text=Hola%2C%20quisiera%20hacer%20una%20consulta%20sobre%20un%20pedido%20de%20Apiario%20La%20Ruda." target="_blank" rel="noopener">Consultar por WhatsApp</a>
       </section>
     </div>
   </main>
@@ -107,7 +110,7 @@
     </div>
   </footer>
 
-  <script src="assets/orders-bundle.js?v=20260825-4"></script>
-  <script src="assets/tracking.js?v=20260825-4"></script>
+  <script src="assets/orders-bundle.js?v=20260825-6"></script>
+  <script src="assets/tracking.js?v=20260825-6"></script>
 </body>
 </html>

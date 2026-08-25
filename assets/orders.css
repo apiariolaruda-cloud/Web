@@ -158,6 +158,17 @@ h1, h2, h3 { color: var(--olive-dark); }
 .button-small { min-height: 40px; padding: 8px 13px; font-size: .88rem; }
 
 .helper { margin-top: 9px; color: var(--muted); font-size: .84rem; }
+.track-search-footer { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; }
+.track-search-footer .helper { flex: 1; }
+.track-admin-link {
+  flex: 0 0 auto;
+  color: rgba(79,81,53,.68);
+  font-size: .76rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.track-admin-link:hover { color: var(--olive-dark); }
 .message {
   display: none;
   margin: 18px auto 0;
@@ -205,6 +216,7 @@ h1, h2, h3 { color: var(--olive-dark); }
 .info-row span { color: var(--muted); font-size: .86rem; }
 .info-row strong { text-align: right; color: var(--olive-dark); font-size: .9rem; }
 .items-list { display: grid; gap: 9px; margin-top: 18px; }
+.items-list-first { margin: 0 0 18px; }
 .item-row { display: flex; justify-content: space-between; gap: 12px; padding: 11px 12px; border-radius: 12px; background: rgba(119,121,79,.07); }
 .item-row span { color: var(--text); }
 .item-row strong { white-space: nowrap; color: var(--olive-dark); }
@@ -222,6 +234,8 @@ h1, h2, h3 { color: var(--olive-dark); }
 .timeline-copy p { margin: 5px 0 0; color: var(--muted); font-size: .86rem; line-height: 1.45; }
 .timeline-copy time { display: block; margin-top: 4px; color: var(--olive); font-size: .76rem; font-weight: 700; }
 .order-contact { margin-top: 18px; display: flex; justify-content: center; }
+.tracking-help-cta { display: flex; justify-content: center; margin: 42px auto 0; }
+.tracking-whatsapp-button { min-width: 230px; }
 
 /* ADMIN */
 .admin-shell { padding: 38px 0 82px; }
@@ -285,7 +299,18 @@ h1, h2, h3 { color: var(--olive-dark); }
 .form-section { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--line); }
 .form-section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .form-section-head h3 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.35rem; font-weight: 500; }
+.form-section-hint { display: block; margin-top: 2px; color: var(--muted); font-size: .78rem; }
 .items-editor { display: grid; gap: 9px; }
+.items-editor:empty::before {
+  content: "Todavía no agregaste artículos. Usá ‘+ Agregar artículo’.";
+  display: block;
+  padding: 16px;
+  border: 1px dashed rgba(79,81,53,.22);
+  border-radius: 13px;
+  color: var(--muted);
+  background: rgba(119,121,79,.035);
+  font-size: .86rem;
+}
 .item-editor-row { display: grid; grid-template-columns: minmax(0, 1fr) 110px 120px 44px; gap: 8px; align-items: center; }
 .remove-item { width: 44px; height: 44px; border: 0; border-radius: 12px; cursor: pointer; color: var(--danger); background: rgba(154,73,68,.08); font-size: 1.15rem; }
 .order-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
@@ -344,6 +369,7 @@ footer { padding: 28px 0 38px; }
   .track-search { padding: 18px; }
   .track-form { grid-template-columns: 1fr; }
   .track-form .button { width: 100%; }
+  .track-search-footer { align-items: flex-start; flex-direction: column; gap: 4px; }
   .order-summary, .order-info, .timeline-card { padding: 19px; }
   .order-summary h2 { font-size: 1.65rem; }
   .info-row { display: grid; gap: 3px; }

@@ -22,27 +22,24 @@
   function historyMap(history) {
     const map = new Map();
     (history || []).forEach(entry => {
-      if (!map.has(entry.status)) map.set(entry.status, entry);
-      else map.set(entry.status, entry);
+      map.set(entry.status, entry);
     });
     return map;
   }
 
   function renderOrder(order) {
-    const current = O.statusByKey(order.status);
-    const currentIndex = O.statusIndex(order.status);
-    const percent = Math.round(((currentIndex + 1) / O.STATUS_FLOW.length) * 100);
+    const flow = O.statusFlow(order);
+    const current = O.statusByKey(order.status, order);
+    const currentIndex = O.statusIndex(order.status, order);
+    const percent = Math.round(((currentIndex + 1) / flow.length) * 100);
     const history = historyMap(order.history);
 
     document.getElementById("resultCode").textContent = `Pedido ${order.tracking_code}`;
-    document.getElementById("resultTitle").textContent = order.customer_first_name
-      ? `${order.customer_first_name}, este es el estado de tu pedido.`
-      : "Este es el estado de tu pedido.";
-    document.getElementById("resultIntro").textContent = "Acá vas a ver cómo avanza desde que lo ingresamos hasta la entrega.";
+    document.getElementById("resultTitle").textContent = "Este es el estado de tu pedido.";
     document.getElementById("currentStatus").textContent = current.label;
     document.getElementById("currentDescription").textContent = current.description;
     document.getElementById("progressFill").style.width = `${percent}%`;
-    document.getElementById("progressText").textContent = `${currentIndex + 1} de ${O.STATUS_FLOW.length} etapas`;
+    document.getElementById("progressText").textContent = `${currentIndex + 1} de ${flow.length} etapas`;
     document.getElementById("updatedText").textContent = order.updated_at ? `Actualizado ${O.formatDateTime(order.updated_at)}` : "";
     document.getElementById("estimatedDate").textContent = O.formatDate(order.estimated_date);
     document.getElementById("deliveryMethod").textContent = order.delivery_method || "A coordinar";
@@ -66,7 +63,7 @@
       note.textContent = "";
     }
 
-    document.getElementById("timeline").innerHTML = O.STATUS_FLOW.map((status, index) => {
+    document.getElementById("timeline").innerHTML = flow.map((status, index) => {
       const isComplete = index < currentIndex;
       const isCurrent = index === currentIndex;
       const historyEntry = history.get(status.key);

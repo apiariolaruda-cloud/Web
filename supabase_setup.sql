@@ -160,7 +160,6 @@ set search_path = public
 as $$
   select jsonb_build_object(
     'tracking_code', o.tracking_code,
-    'customer_first_name', split_part(trim(o.customer_name), ' ', 1),
     'status', o.status,
     'estimated_date', o.estimated_date,
     'delivery_method', o.delivery_method,
@@ -228,3 +227,82 @@ grant execute on function public.la_ruda_keepalive() to anon, authenticated;
 -- =============================================================
 -- FIN
 -- =============================================================
+
+
+-- =============================================================
+-- ADMINISTRADOR POR UUID + RPC DE VALIDACIÓN
+-- =============================================================
+
+create table if not exists public.la_ruda_admins (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+
+alter table public.la_ruda_admins enable row level security;
+revoke all on table public.la_ruda_admins from anon, authenticated;
+
+do $$
+declare
+  v_user uuid;
+  v_auth_count integer;
+  v_admin_count integer;
+begin
+  select count(*) into v_admin_count from public.la_ruda_admins;
+  if v_admin_count = 0 then
+    select id into v_user
+    from auth.users
+    where lower(email) = 'admin@apiariolaruda.local'
+    order by created_at
+    limit 1;
+
+    if v_user is null then
+      select count(*) into v_auth_count from auth.users;
+      if v_auth_count = 1 then
+        select id into v_user from auth.users order by created_at limit 1;
+      end if;
+    end if;
+
+    if v_user is null then
+      raise exception 'No pude determinar automáticamente el administrador. Hay varios usuarios en Authentication > Users.';
+    end if;
+
+    insert into public.la_ruda_admins(user_id) values (v_user)
+    on conflict (user_id) do nothing;
+  end if;
+end $$;
+
+drop function if exists public.la_ruda_is_admin();
+create function public.la_ruda_is_admin()
+returns boolean
+language sql
+security definer
+stable
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.la_ruda_admins a where a.user_id = auth.uid()
+  );
+$$;
+
+revoke all on function public.la_ruda_is_admin() from public;
+grant execute on function public.la_ruda_is_admin() to authenticated;
+
+drop policy if exists admin_orders_all on public.orders;
+create policy admin_orders_all on public.orders
+for all to authenticated
+using (public.la_ruda_is_admin())
+with check (public.la_ruda_is_admin());
+
+drop policy if exists admin_order_items_all on public.order_items;
+create policy admin_order_items_all on public.order_items
+for all to authenticated
+using (public.la_ruda_is_admin())
+with check (public.la_ruda_is_admin());
+
+drop policy if exists admin_order_history_all on public.order_status_history;
+create policy admin_order_history_all on public.order_status_history
+for all to authenticated
+using (public.la_ruda_is_admin())
+with check (public.la_ruda_is_admin());
+
+NOTIFY pgrst, 'reload schema';

@@ -47,22 +47,35 @@
     adminApp.classList.toggle("show", loggedIn);
   }
 
+  function renderOrderStatusOptions(orderLike = {}, preferredStatus = "") {
+    const flow = O.statusFlow(orderLike);
+    const previous = preferredStatus || orderStatus.value;
+
+    orderStatus.innerHTML = flow
+      .map(status => `<option value="${O.escapeHtml(status.key)}">${O.escapeHtml(status.label)}</option>`)
+      .join("");
+
+    if (flow.some(status => status.key === previous)) {
+      orderStatus.value = previous;
+    } else {
+      orderStatus.value = flow[0]?.key || "pedido_ingresado";
+    }
+  }
+
   function setupStatusControls() {
     statusFilter.innerHTML = [
       '<option value="">Todos los estados</option>',
-      ...O.STATUS_FLOW.map(status => `<option value="${O.escapeHtml(status.key)}">${O.escapeHtml(status.label)}</option>`)
+      ...O.STATUS_FILTER.map(status => `<option value="${O.escapeHtml(status.key)}">${O.escapeHtml(status.label)}</option>`)
     ].join("");
 
-    orderStatus.innerHTML = O.STATUS_FLOW
-      .map(status => `<option value="${O.escapeHtml(status.key)}">${O.escapeHtml(status.label)}</option>`)
-      .join("");
+    renderOrderStatusOptions({ items: [] }, "pedido_ingresado");
   }
 
   function itemTemplate(item = {}) {
     const row = document.createElement("div");
     row.className = "item-editor-row";
     row.innerHTML = `
-      <input class="input item-description" type="text" placeholder="Ej.: Núcleo Baby" value="${O.escapeHtml(item.description || "")}" required />
+      <input class="input item-description" type="text" placeholder="Ej.: Núcleo Baby / Reina fecundada" value="${O.escapeHtml(item.description || "")}" required />
       <input class="input item-quantity" type="number" min="0.01" step="0.01" value="${O.escapeHtml(item.quantity ?? 1)}" aria-label="Cantidad" required />
       <input class="input item-price" type="number" min="0" step="1" value="${item.unit_price == null ? "" : O.escapeHtml(item.unit_price)}" placeholder="$ unit." aria-label="Precio unitario" />
       <button class="remove-item" type="button" aria-label="Eliminar artículo">×</button>
@@ -70,16 +83,16 @@
 
     row.querySelector(".remove-item").addEventListener("click", () => {
       row.remove();
-      if (!itemsEditor.children.length) addItem();
-      updateToolsPreview();
+      syncStatusToItems();
     });
 
-    row.querySelectorAll("input").forEach(input => input.addEventListener("input", updateToolsPreview));
+    row.querySelectorAll("input").forEach(input => input.addEventListener("input", syncStatusToItems));
     return row;
   }
 
   function addItem(item = {}) {
     itemsEditor.appendChild(itemTemplate(item));
+    syncStatusToItems();
   }
 
   function collectItems() {
@@ -92,6 +105,13 @@
         sort_order: index
       }))
       .filter(item => item.description && item.quantity > 0);
+  }
+
+  function syncStatusToItems() {
+    const items = collectItems();
+    const previous = orderStatus.value;
+    renderOrderStatusOptions({ items }, previous);
+    updateToolsPreview();
   }
 
   function computeItemsTotal(items) {
@@ -126,7 +146,7 @@
     if (!currentOrder?.tracking_code) return;
     const draft = { ...currentOrder, ...currentFormOrder(), tracking_code: currentOrder.tracking_code };
     const link = O.trackingUrl(draft.tracking_code);
-    const stage = O.statusByKey(draft.status);
+    const stage = O.statusByKey(draft.status, draft);
     document.getElementById("trackingLinkPreview").textContent = link;
     document.getElementById("openTrackingButton").href = link;
     document.getElementById("whatsappStagePreview").textContent = stage.label;
@@ -140,7 +160,7 @@
     list.innerHTML = sorted.length
       ? sorted.map(entry => `
           <div class="history-row">
-            <strong>${O.escapeHtml(O.statusByKey(entry.status).label)}</strong>
+            <strong>${O.escapeHtml(O.statusByKey(entry.status, currentOrder || { items: collectItems() }).label)}</strong>
             <span>${entry.note ? O.escapeHtml(entry.note) : "Cambio de estado"}</span>
             <span>${O.escapeHtml(O.formatDateTime(entry.created_at))}</span>
           </div>
@@ -152,9 +172,8 @@
     orderForm.reset();
     document.getElementById("orderId").value = "";
     itemsEditor.innerHTML = "";
-    orderStatus.value = "pedido_ingresado";
+    renderOrderStatusOptions({ items: [] }, "pedido_ingresado");
     document.getElementById("deliveryMethodInput").value = "A coordinar";
-    addItem({ description: "Núcleo", quantity: 1 });
     document.getElementById("orderTools").hidden = true;
     document.getElementById("historySection").hidden = true;
     document.getElementById("deleteOrderButton").hidden = true;
@@ -177,7 +196,6 @@
     document.getElementById("customerName").value = order.customer_name || "";
     document.getElementById("customerPhone").value = order.customer_phone || "";
     document.getElementById("customerEmail").value = order.customer_email || "";
-    orderStatus.value = order.status || "pedido_ingresado";
     document.getElementById("estimatedDateInput").value = order.estimated_date || "";
     document.getElementById("deliveryMethodInput").value = order.delivery_method || "A coordinar";
     document.getElementById("orderTotal").value = Number(order.total || 0) > 0 ? Number(order.total) : "";
@@ -187,7 +205,7 @@
     itemsEditor.innerHTML = "";
     const items = [...(order.order_items || [])].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     if (items.length) items.forEach(addItem);
-    else addItem({ description: "Núcleo", quantity: 1 });
+    renderOrderStatusOptions(order, order.status || "pedido_ingresado");
 
     document.getElementById("orderModalTitle").textContent = `Pedido ${order.tracking_code}`;
     document.getElementById("orderModalSubtitle").textContent = `Editando el pedido de ${order.customer_name}.`;
@@ -260,7 +278,7 @@
     }
 
     ordersList.innerHTML = list.map(order => {
-      const status = O.statusByKey(order.status);
+      const status = O.statusByKey(order.status, order);
       return `
         <article class="card order-card" data-order-id="${O.escapeHtml(order.id)}">
           <div class="order-card-main">
