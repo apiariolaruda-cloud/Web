@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#77794f" />
+  <title>Administración de pedidos | Apiario La Ruda</title>
+  <link rel="stylesheet" href="assets/orders.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="Volver a Apiario La Ruda">
+        <img src="assets/logo-redondo.jpg" alt="" />
+        <span class="brand-text">
+          <img class="brand-wordmark" src="assets/la-ruda-wordmark.png" alt="La Ruda" />
+          <span class="brand-tagline">Apiario</span>
+        </span>
+      </a>
+      <div class="nav-actions">
+        <a class="nav-link secondary-hide" href="seguimiento.html">Ver seguimiento</a>
+        <a class="nav-link primary" href="index.html">Sitio público</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-shell">
+    <div class="container">
+      <section class="card login-card" id="loginCard">
+        <div class="kicker">Acceso privado</div>
+        <h1>Pedidos</h1>
+        <p>Ingresá con el usuario administrador para gestionar los pedidos del apiario.</p>
+        <form class="form-stack" id="loginForm">
+          <div>
+            <label class="label" for="username">Usuario</label>
+            <input class="input" id="username" name="username" autocomplete="username" required />
+          </div>
+          <div>
+            <label class="label" for="password">Contraseña</label>
+            <input class="input" id="password" name="password" type="password" autocomplete="current-password" required />
+          </div>
+          <button class="button button-primary" id="loginButton" type="submit">Ingresar</button>
+        </form>
+        <div class="message" id="loginMessage" role="status"></div>
+        <div class="login-footer">La contraseña se valida contra Supabase Auth y no queda escrita en los archivos públicos del sitio.</div>
+      </section>
+
+      <section class="admin-app" id="adminApp">
+        <div class="admin-topbar">
+          <div class="admin-title">
+            <div class="kicker">Administración</div>
+            <h1>Pedidos de núcleos</h1>
+            <p>Creá pedidos, actualizá etapas y avisale al cliente por WhatsApp.</p>
+          </div>
+          <div class="admin-top-actions">
+            <button class="button button-secondary button-small" id="refreshButton" type="button">Actualizar</button>
+            <button class="button button-primary" id="newOrderButton" type="button">+ Nuevo pedido</button>
+            <button class="button button-soft button-small" id="logoutButton" type="button">Salir</button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="card stat"><span>Pedidos activos</span><strong id="statActive">0</strong></div>
+          <div class="card stat"><span>Pendientes de pago</span><strong id="statPayment">0</strong></div>
+          <div class="card stat"><span>En entrega</span><strong id="statDelivery">0</strong></div>
+          <div class="card stat"><span>Finalizados</span><strong id="statDone">0</strong></div>
+        </div>
+
+        <div class="admin-toolbar">
+          <input class="input" id="searchOrders" type="search" placeholder="Buscar por cliente, código o WhatsApp…" />
+          <select class="select" id="statusFilter" aria-label="Filtrar por estado"></select>
+        </div>
+
+        <div class="orders-list" id="ordersList"></div>
+      </section>
+    </div>
+  </main>
+
+  <div class="admin-modal" id="orderModal" aria-hidden="true">
+    <div class="admin-panel" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+      <div class="admin-panel-header">
+        <div>
+          <h2 id="orderModalTitle">Nuevo pedido</h2>
+          <p id="orderModalSubtitle">Completá los datos principales y los artículos del pedido.</p>
+        </div>
+        <button class="icon-button" id="closeOrderModal" type="button" aria-label="Cerrar">×</button>
+      </div>
+
+      <form class="admin-panel-body" id="orderForm">
+        <input type="hidden" id="orderId" />
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="customerName">Nombre del comprador *</label>
+            <input class="input" id="customerName" required />
+          </div>
+          <div class="field">
+            <label class="label" for="customerPhone">WhatsApp *</label>
+            <input class="input" id="customerPhone" inputmode="tel" placeholder="5491126960110" required />
+            <span class="hint">Ingresalo con código de país. Para Argentina: 549 + característica + número.</span>
+          </div>
+          <div class="field">
+            <label class="label" for="customerEmail">Email</label>
+            <input class="input" id="customerEmail" type="email" />
+          </div>
+          <div class="field">
+            <label class="label" for="orderStatus">Estado *</label>
+            <select class="select" id="orderStatus" required></select>
+          </div>
+          <div class="field">
+            <label class="label" for="estimatedDateInput">Fecha estimada</label>
+            <input class="input" id="estimatedDateInput" type="date" />
+          </div>
+          <div class="field">
+            <label class="label" for="deliveryMethodInput">Modalidad</label>
+            <select class="select" id="deliveryMethodInput">
+              <option value="A coordinar">A coordinar</option>
+              <option value="Retiro">Retiro</option>
+              <option value="Envío">Envío</option>
+              <option value="Entrega coordinada">Entrega coordinada</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="orderTotal">Total del pedido</label>
+            <input class="input" id="orderTotal" type="number" min="0" step="1" placeholder="0" />
+          </div>
+          <div class="field full">
+            <label class="label" for="publicNoteInput">Nota visible para el cliente</label>
+            <textarea class="textarea" id="publicNoteInput" placeholder="Ej.: Nos comunicamos para coordinar día y horario de entrega."></textarea>
+          </div>
+          <div class="field full">
+            <label class="label" for="internalNoteInput">Nota interna</label>
+            <textarea class="textarea" id="internalNoteInput" placeholder="Esta nota solo la ve administración."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-head">
+            <h3>Artículos del pedido</h3>
+            <button class="button button-soft button-small" id="addItemButton" type="button">+ Agregar artículo</button>
+          </div>
+          <div class="items-editor" id="itemsEditor"></div>
+        </div>
+
+        <div class="order-tools" id="orderTools" hidden>
+          <div class="tool-card">
+            <span>Link de seguimiento</span>
+            <strong id="trackingLinkPreview"></strong>
+            <div class="tool-actions">
+              <button class="button button-secondary button-small" id="copyTrackingButton" type="button">Copiar link</button>
+              <a class="button button-soft button-small" id="openTrackingButton" href="#" target="_blank" rel="noopener">Abrir</a>
+            </div>
+          </div>
+          <div class="tool-card">
+            <span>Mensaje de esta etapa</span>
+            <strong id="whatsappStagePreview"></strong>
+            <div class="tool-actions">
+              <a class="button button-whatsapp button-small" id="sendWhatsAppButton" href="#" target="_blank" rel="noopener">Abrir WhatsApp</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section" id="historySection" hidden>
+          <div class="form-section-head"><h3>Historial de estados</h3></div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+
+        <div class="form-actions">
+          <button class="button button-danger" id="deleteOrderButton" type="button" hidden>Eliminar pedido</button>
+          <button class="button button-secondary" id="cancelOrderButton" type="button">Cancelar</button>
+          <button class="button button-primary" id="saveOrderButton" type="submit">Guardar pedido</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-config.js"></script>
+  <script src="assets/orders-common.js"></script>
+  <script src="assets/admin.js"></script>
+</body>
+</html>

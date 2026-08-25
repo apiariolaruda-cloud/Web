@@ -183,6 +183,19 @@
       font-weight: 700;
     }
 
+    .nav-track {
+      padding: 10px 17px;
+      border: 1px solid rgba(79, 81, 53, .24);
+      border-radius: 999px;
+      color: var(--olive-dark) !important;
+      background: rgba(119, 121, 79, .06);
+      font-weight: 800;
+    }
+
+    .nav-track:hover {
+      background: rgba(119, 121, 79, .13);
+    }
+
     .menu-button {
       display: none;
       width: 44px;
@@ -744,6 +757,26 @@
       color: var(--olive-dark);
     }
 
+    .footer-meta {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+    }
+
+    .footer-admin {
+      color: var(--olive-dark);
+      font-size: .78rem;
+      font-weight: 700;
+      opacity: .68;
+    }
+
+    .footer-admin:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
     .footer-brand > img:first-child {
       width: 34px;
       height: 34px;
@@ -1059,6 +1092,11 @@
       .nav-links .nav-cta {
         justify-content: center;
         margin-top: 3px;
+      }
+
+      .nav-links .nav-track {
+        justify-content: center;
+        border-radius: 11px;
       }
 
       .nav-links a:hover {
@@ -1552,6 +1590,7 @@
         <a href="#inicio">Inicio</a>
         <a href="#nosotros">Nosotros</a>
         <a href="#productos">Productos</a>
+        <a class="nav-track" href="seguimiento.html">Seguir pedido</a>
         <a class="nav-cta" href="#contacto">Contacto</a>
       </nav>
     </div>
@@ -1686,7 +1725,10 @@
         <img src="assets/logo-redondo.jpg" alt="" />
         <img class="footer-wordmark" src="assets/la-ruda-wordmark.png" alt="Apiario La Ruda" />
       </div>
-      <div>© <span id="year"></span> Apiario La Ruda. Todos los derechos reservados.</div>
+      <div class="footer-meta">
+        <div>© <span id="year"></span> Apiario La Ruda. Todos los derechos reservados.</div>
+        <a class="footer-admin" href="admin.html">Administración</a>
+      </div>
     </div>
   </footer>
 

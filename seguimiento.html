@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Seguimiento de pedidos de núcleos de Apiario La Ruda." />
+  <meta name="theme-color" content="#77794f" />
+  <title>Seguir pedido | Apiario La Ruda</title>
+  <link rel="stylesheet" href="assets/orders.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="Volver a Apiario La Ruda">
+        <img src="assets/logo-redondo.jpg" alt="" />
+        <span class="brand-text">
+          <img class="brand-wordmark" src="assets/la-ruda-wordmark.png" alt="La Ruda" />
+          <span class="brand-tagline">Apiario</span>
+        </span>
+      </a>
+      <div class="nav-actions">
+        <a class="nav-link secondary-hide" href="index.html#productos">Productos</a>
+        <a class="nav-link primary" href="index.html">Volver a la web</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <div class="container">
+      <div class="page-heading">
+        <div class="kicker">Seguimiento de pedidos</div>
+        <h1>¿Cómo viene tu núcleo?</h1>
+        <p>Ingresá el código que te enviamos y vas a poder ver, de forma simple, en qué etapa se encuentra tu pedido.</p>
+      </div>
+
+      <section class="card track-search" aria-labelledby="trackTitle">
+        <label class="label" id="trackTitle" for="trackingCode">Código de seguimiento</label>
+        <form class="track-form" id="trackingForm">
+          <input
+            class="input"
+            id="trackingCode"
+            name="trackingCode"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            maxlength="30"
+            placeholder="Ej.: LR-26-A1B2C3"
+            aria-describedby="trackingHelp"
+          />
+          <button class="button button-primary" id="trackingSubmit" type="submit">Buscar pedido</button>
+        </form>
+        <div class="helper" id="trackingHelp">El código figura en el enlace o mensaje de WhatsApp que recibiste.</div>
+      </section>
+
+      <div class="message" id="trackingMessage" role="status" aria-live="polite"></div>
+
+      <section class="tracking-result" id="trackingResult" aria-live="polite">
+        <div class="card order-summary">
+          <div>
+            <div class="order-code" id="resultCode"></div>
+            <h2 id="resultTitle"></h2>
+            <p id="resultIntro"></p>
+            <div class="progress-wrap">
+              <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+              <div class="progress-copy"><span id="progressText"></span><span id="updatedText"></span></div>
+            </div>
+          </div>
+          <div class="current-stage">
+            <span>Estado actual</span>
+            <strong id="currentStatus"></strong>
+            <small id="currentDescription"></small>
+          </div>
+        </div>
+
+        <div class="order-grid">
+          <div class="card order-info">
+            <h3 class="card-title">Tu pedido</h3>
+            <div class="info-list">
+              <div class="info-row"><span>Entrega estimada</span><strong id="estimatedDate"></strong></div>
+              <div class="info-row"><span>Modalidad</span><strong id="deliveryMethod"></strong></div>
+            </div>
+            <div class="items-list" id="itemsList"></div>
+            <div class="public-note" id="publicNote" hidden></div>
+          </div>
+
+          <div class="card timeline-card">
+            <h3 class="card-title">Etapas del pedido</h3>
+            <div class="timeline" id="timeline"></div>
+          </div>
+        </div>
+
+        <div class="order-contact">
+          <a class="button button-secondary" id="orderWhatsApp" href="#" target="_blank" rel="noopener">Consultar por este pedido</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-row">
+      <div class="footer-brand">
+        <img src="assets/logo-redondo.jpg" alt="" />
+        <img src="assets/la-ruda-wordmark.png" alt="Apiario La Ruda" />
+      </div>
+      <div>Seguimiento de pedidos · Apiario La Ruda</div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-config.js"></script>
+  <script src="assets/orders-common.js"></script>
+  <script src="assets/tracking.js"></script>
+</body>
+</html>
