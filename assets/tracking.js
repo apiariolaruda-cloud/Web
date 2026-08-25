@@ -106,7 +106,7 @@
     }
 
     if (!db) {
-      setMessage("El seguimiento todavía no está conectado a la base de datos. Revisá la configuración de Supabase.", "error");
+      setMessage("No se pudo inicializar la conexión con el seguimiento. Recargá la página con Ctrl+F5.", "error");
       return;
     }
 

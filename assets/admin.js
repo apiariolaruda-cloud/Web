@@ -423,7 +423,7 @@
     clearLoginMessage();
 
     if (!db) {
-      showLoginMessage("Primero hay que completar assets/supabase-config.js con los datos del proyecto Supabase.");
+      showLoginMessage("No se pudo inicializar la conexión con Supabase. Recargá la página con Ctrl+F5. Si continúa, revisá que assets/orders-bundle.js esté en la carpeta assets.");
       return;
     }
 
@@ -470,7 +470,7 @@
 
     if (!db) {
       setAuthView(false);
-      showLoginMessage("El panel está listo, pero falta conectar Supabase en assets/supabase-config.js.", "info");
+      showLoginMessage("No se pudo inicializar la conexión con Supabase. Hacé Ctrl+F5 para descartar una copia anterior del sitio.", "info");
       return;
     }
 
