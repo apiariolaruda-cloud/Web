@@ -12,5 +12,5 @@ window.LA_RUDA_CONFIG = {
   supabaseAnonKey: "sb_publishable_InNsEXDoaDs-hTDeHl6vPA_Q05BuaBp",
   adminUsername: "admin",
   adminEmail: "admin@apiariolaruda.local",
-  siteUrl: "https://apiario.laruda.com.ar"
+  siteUrl: ""
 };

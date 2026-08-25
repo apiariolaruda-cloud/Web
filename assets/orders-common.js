@@ -147,8 +147,12 @@
 
   function trackingUrl(code) {
     const cfg = getConfig();
-    const base = String(cfg.siteUrl || window.location.origin || "").replace(/\/$/, "");
-    return `${base}/seguimiento.html?pedido=${encodeURIComponent(cleanTrackingCode(code))}`;
+    const cleanCode = cleanTrackingCode(code);
+    if (cfg.siteUrl) {
+      const base = String(cfg.siteUrl).replace(/\/$/, "");
+      return `${base}/seguimiento.html?pedido=${encodeURIComponent(cleanCode)}`;
+    }
+    return new URL(`seguimiento.html?pedido=${encodeURIComponent(cleanCode)}`, window.location.href).href;
   }
 
   function whatsappUrl(phone, message) {
