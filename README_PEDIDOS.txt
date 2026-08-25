@@ -74,3 +74,11 @@ La consulta es solo lectura y no toca el contenido de los pedidos.
 PROYECTO SUPABASE CONFIGURADO
 Project URL: https://bfqqpniakxznbgfbektb.supabase.co
 Falta únicamente pegar la Publishable key en assets/supabase-config.js.
+
+
+ACCESO ADMINISTRADOR
+--------------------
+Desde la web: botón "Administración" del menú superior.
+Acceso directo: /admin.html
+Usuario visible: admin
+La contraseña se valida en Supabase Auth y no se guarda en los archivos de la web.

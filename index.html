@@ -162,7 +162,7 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 30px;
+      gap: 20px;
     }
 
     .nav-links a {
@@ -194,6 +194,20 @@
 
     .nav-track:hover {
       background: rgba(119, 121, 79, .13);
+    }
+
+    .nav-admin {
+      padding: 9px 14px;
+      border: 1px solid rgba(79, 81, 53, .20);
+      border-radius: 999px;
+      color: var(--olive-dark) !important;
+      background: rgba(255, 255, 255, .58);
+      font-size: .86rem !important;
+      font-weight: 750;
+    }
+
+    .nav-admin:hover {
+      background: rgba(119, 121, 79, .10);
     }
 
     .menu-button {
@@ -1094,7 +1108,8 @@
         margin-top: 3px;
       }
 
-      .nav-links .nav-track {
+      .nav-links .nav-track,
+      .nav-links .nav-admin {
         justify-content: center;
         border-radius: 11px;
       }
@@ -1592,6 +1607,7 @@
         <a href="#productos">Productos</a>
         <a class="nav-track" href="seguimiento.html">Seguir pedido</a>
         <a class="nav-cta" href="#contacto">Contacto</a>
+        <a class="nav-admin" href="admin.html" title="Acceso privado">Administración</a>
       </nav>
     </div>
   </header>
