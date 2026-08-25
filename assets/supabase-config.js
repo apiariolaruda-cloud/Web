@@ -9,7 +9,7 @@
 */
 window.LA_RUDA_CONFIG = {
   supabaseUrl: "https://bfqqpniakxznbgfbektb.supabase.co",
-  supabaseAnonKey: "PEGA_AQUI_TU_SUPABASE_ANON_KEY",
+  supabaseAnonKey: "sb_publishable_InNsEXDoaDs-hTDeHl6vPA_Q05BuaBp",
   adminUsername: "admin",
   adminEmail: "admin@apiariolaruda.local",
   siteUrl: "https://apiario.laruda.com.ar"
