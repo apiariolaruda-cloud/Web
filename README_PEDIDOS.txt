@@ -90,3 +90,7 @@ La contraseña se valida en Supabase Auth y no se guarda en los archivos de la w
 3. Abrir admin.html con Ctrl+F5.
 4. Escribir usuario admin. La primera vez el panel pide el email real de Supabase y lo recuerda en ese navegador.
 5. La contraseña nunca se guarda en los archivos del sitio.
+
+--- ACTUALIZACION V4 ---
+Si ya tenes la base funcionando, ejecuta ACTUALIZAR_TOTAL_PAGOS_V4.sql una sola vez.
+Esta actualizacion publica el total, precios unitarios y las fechas del historial de pago en el seguimiento del cliente.

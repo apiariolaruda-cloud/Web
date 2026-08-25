@@ -77,11 +77,36 @@
           <div class="card order-info">
             <h3 class="card-title">Tu pedido</h3>
             <div class="items-list items-list-first" id="itemsList"></div>
-            <div class="info-list">
+
+            <div class="order-total-public">
+              <span>Total del pedido</span>
+              <strong id="publicTotal"></strong>
+            </div>
+
+            <div class="payment-public" id="paymentInfo" hidden>
+              <div class="payment-public-head">
+                <span>Pago</span>
+                <strong id="paymentStatusLabel"></strong>
+              </div>
+              <div class="payment-alias" id="paymentAliasBox" hidden>
+                <span>Alias para realizar el pago</span>
+                <div class="payment-alias-line">
+                  <strong>apiariolaruda</strong>
+                  <button class="button button-soft button-small" id="copyAliasButton" type="button">Copiar alias</button>
+                </div>
+              </div>
+              <div class="payment-dates">
+                <div class="payment-date-row" id="pendingPaymentDateRow" hidden><span>Pendiente de pago desde</span><strong id="pendingPaymentDate"></strong></div>
+                <div class="payment-date-row" id="paymentConfirmedDateRow" hidden><span>Pago confirmado</span><strong id="paymentConfirmedDate"></strong></div>
+              </div>
+            </div>
+
+            <div class="public-note" id="publicNote" hidden></div>
+
+            <div class="delivery-footer">
               <div class="info-row"><span>Entrega estimada</span><strong id="estimatedDate"></strong></div>
               <div class="info-row"><span>Modalidad</span><strong id="deliveryMethod"></strong></div>
             </div>
-            <div class="public-note" id="publicNote" hidden></div>
           </div>
 
           <div class="card timeline-card">
@@ -110,7 +135,7 @@
     </div>
   </footer>
 
-  <script src="assets/orders-bundle.js?v=20260825-7"></script>
-  <script src="assets/tracking.js?v=20260825-7"></script>
+  <script src="assets/orders-bundle.js?v=20260825-8"></script>
+  <script src="assets/tracking.js?v=20260825-8"></script>
 </body>
 </html>

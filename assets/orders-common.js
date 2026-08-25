@@ -381,7 +381,8 @@
         `Hola${namePart}. Tu pedido ${code} en Apiario La Ruda ya fue ingresado. ` +
         `Podés seguir su estado desde este enlace:\n${link}`,
       pendiente_pago:
-        `Hola${namePart}. Tu pedido ${code} llegó a la etapa de pago.${totalLine} ` +
+        `Hola${namePart}. Tu pedido ${code} llegó a la etapa de pago.${totalLine}\n` +
+        `Alias para realizar el pago: apiariolaruda\n` +
         `Podés consultar el estado actualizado acá:\n${link}`,
       pago_confirmado:
         `Hola${namePart}. Confirmamos correctamente el pago de tu pedido ${code}. ` +

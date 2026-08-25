@@ -22,9 +22,16 @@
   const nucleoStageField = document.getElementById("nucleoStageField");
   const reinaStageField = document.getElementById("reinaStageField");
   const toast = document.getElementById("toast");
+  const addItemButton = document.getElementById("addItemButton");
+  const editOrderButton = document.getElementById("editOrderButton");
+  const saveOrderButton = document.getElementById("saveOrderButton");
+  const cancelOrderButton = document.getElementById("cancelOrderButton");
+  const deleteOrderButton = document.getElementById("deleteOrderButton");
+  const orderTotalField = document.getElementById("orderTotal");
 
   let orders = [];
   let currentOrder = null;
+  let editingDetails = true;
   let toastTimer = null;
 
   function showLoginMessage(text, type = "error") {
@@ -103,7 +110,7 @@
     row.innerHTML = `
       <select class="select item-product" required aria-label="Artículo">${options}</select>
       <input class="input item-quantity" type="number" min="0.01" step="0.01" value="${O.escapeHtml(item.quantity ?? 1)}" aria-label="Cantidad" required />
-      <input class="input item-price" type="number" min="0" step="1" value="${item.unit_price == null ? "" : O.escapeHtml(item.unit_price)}" placeholder="$ unit." aria-label="Precio unitario" />
+      <input class="input item-price" type="number" min="0" step="1" value="${item.unit_price == null ? "" : O.escapeHtml(item.unit_price)}" placeholder="$ unit." aria-label="Precio unitario" required />
       <button class="remove-item" type="button" aria-label="Eliminar artículo">×</button>
     `;
 
@@ -111,15 +118,24 @@
     row.querySelector(".remove-item").addEventListener("click", () => {
       row.remove();
       syncPreparationControls();
+      refreshCalculatedTotal();
     });
-    row.querySelector(".item-product").addEventListener("change", syncPreparationControls);
-    row.querySelectorAll("input").forEach(input => input.addEventListener("input", updateToolsPreview));
+    row.querySelector(".item-product").addEventListener("change", () => {
+      syncPreparationControls();
+      refreshCalculatedTotal();
+    });
+    row.querySelectorAll("input").forEach(input => input.addEventListener("input", () => {
+      refreshCalculatedTotal();
+      updateToolsPreview();
+    }));
     return row;
   }
 
   function addItem(item = {}) {
     itemsEditor.appendChild(itemTemplate(item));
     syncPreparationControls();
+    refreshCalculatedTotal();
+    applyEditMode();
   }
 
   function collectItems() {
@@ -168,11 +184,20 @@
     }, 0);
   }
 
+  function refreshCalculatedTotal() {
+    const items = collectItems();
+    const hasAnyPrice = items.some(item => item.unit_price != null && Number.isFinite(item.unit_price));
+    let total = computeItemsTotal(items);
+    if (!hasAnyPrice && currentOrder && Number(currentOrder.total || 0) > 0) total = Number(currentOrder.total || 0);
+    orderTotalField.dataset.rawValue = String(total || 0);
+    orderTotalField.value = O.formatMoney(total || 0);
+    return total || 0;
+  }
+
   function currentFormOrder() {
     const items = collectItems();
     const types = O.detectOrderTypes(items);
-    const totalField = document.getElementById("orderTotal").value;
-    const computedTotal = computeItemsTotal(items);
+    const computedTotal = refreshCalculatedTotal();
 
     return {
       id: document.getElementById("orderId").value || null,
@@ -185,7 +210,7 @@
       reina_stage: types.hasReina ? reinaStage.value : "pendiente",
       estimated_date: document.getElementById("estimatedDateInput").value || null,
       delivery_method: document.getElementById("deliveryMethodInput").value || "A coordinar",
-      total: totalField === "" ? computedTotal : Number(totalField || 0),
+      total: computedTotal,
       public_note: document.getElementById("publicNoteInput").value.trim() || null,
       internal_note: document.getElementById("internalNoteInput").value.trim() || null,
       items
@@ -256,6 +281,78 @@
       : '<div class="helper">Todavía no hay cambios de estado registrados.</div>';
   }
 
+  function latestStatusHistory(order, status) {
+    return (order?.order_status_history || [])
+      .filter(entry => entry.status === status)
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+      .at(-1) || null;
+  }
+
+  function renderPaymentAudit(order) {
+    const section = document.getElementById("paymentAuditSection");
+    const box = document.getElementById("paymentAudit");
+    if (!order?.id) {
+      section.hidden = true;
+      box.innerHTML = "";
+      return;
+    }
+
+    const pending = latestStatusHistory(order, "pendiente_pago");
+    const confirmed = latestStatusHistory(order, "pago_confirmado");
+    section.hidden = false;
+    box.innerHTML = `
+      <div class="payment-audit-row">
+        <span>Entró en pendiente de pago</span>
+        <strong>${pending ? O.escapeHtml(O.formatDateTime(pending.created_at)) : "Todavía no"}</strong>
+      </div>
+      <div class="payment-audit-row">
+        <span>Confirmación de pago recibida</span>
+        <strong>${confirmed ? O.escapeHtml(O.formatDateTime(confirmed.created_at)) : "Todavía no"}</strong>
+      </div>`;
+  }
+
+  function applyEditMode() {
+    const existing = Boolean(currentOrder?.id);
+    const lockDetails = existing && !editingDetails;
+    const detailIds = [
+      "customerName", "customerPhone", "customerEmail",
+      "estimatedDateInput", "deliveryMethodInput",
+      "publicNoteInput", "internalNoteInput"
+    ];
+
+    detailIds.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) element.disabled = lockDetails;
+    });
+
+    itemsEditor.querySelectorAll("select, input, button.remove-item").forEach(element => {
+      element.disabled = lockDetails;
+    });
+
+    // Los estados siempre pueden actualizarse sin entrar a edición completa.
+    orderStatus.disabled = false;
+    nucleoStage.disabled = false;
+    reinaStage.disabled = false;
+    orderTotalField.readOnly = true;
+
+    addItemButton.hidden = lockDetails;
+    editOrderButton.hidden = !existing || editingDetails;
+    deleteOrderButton.hidden = !existing || !editingDetails;
+
+    if (!existing) {
+      saveOrderButton.textContent = "Crear pedido";
+      cancelOrderButton.textContent = "Cancelar";
+    } else if (editingDetails) {
+      saveOrderButton.textContent = "Guardar cambios";
+      cancelOrderButton.textContent = "Cancelar edición";
+    } else {
+      saveOrderButton.textContent = "Guardar estado";
+      cancelOrderButton.textContent = "Cerrar";
+    }
+
+    orderModal.classList.toggle("order-view-mode", lockDetails);
+  }
+
   function resetForm() {
     orderForm.reset();
     document.getElementById("orderId").value = "";
@@ -268,19 +365,25 @@
     document.getElementById("deliveryMethodInput").value = "A coordinar";
     document.getElementById("orderTools").hidden = true;
     document.getElementById("historySection").hidden = true;
-    document.getElementById("deleteOrderButton").hidden = true;
+    document.getElementById("paymentAuditSection").hidden = true;
+    editOrderButton.hidden = true;
+    deleteOrderButton.hidden = true;
+    orderTotalField.dataset.rawValue = "0";
+    orderTotalField.value = O.formatMoney(0);
   }
 
   function openNewOrder() {
     currentOrder = null;
+    editingDetails = true;
     resetForm();
     document.getElementById("orderModalTitle").textContent = "Nuevo pedido";
-    document.getElementById("orderModalSubtitle").textContent = "Seleccioná los artículos. Si hay núcleo y reina, vas a gestionar las dos preparaciones por separado.";
+    document.getElementById("orderModalSubtitle").textContent = "Seleccioná los artículos. El total se calcula automáticamente con los precios unitarios.";
+    applyEditMode();
     openModal();
     setTimeout(() => document.getElementById("customerName").focus(), 50);
   }
 
-  function openEditOrder(order) {
+  function fillExistingOrder(order) {
     currentOrder = order;
     resetForm();
 
@@ -290,7 +393,6 @@
     document.getElementById("customerEmail").value = order.customer_email || "";
     document.getElementById("estimatedDateInput").value = order.estimated_date || "";
     document.getElementById("deliveryMethodInput").value = order.delivery_method || "A coordinar";
-    document.getElementById("orderTotal").value = Number(order.total || 0) > 0 ? Number(order.total) : "";
     document.getElementById("publicNoteInput").value = order.public_note || "";
     document.getElementById("internalNoteInput").value = order.internal_note || "";
 
@@ -302,15 +404,38 @@
     renderPrepOptions(nucleoStage, "nucleo", order.nucleo_stage || "pendiente");
     renderPrepOptions(reinaStage, "reina", order.reina_stage || "pendiente");
     syncPreparationControls();
+    refreshCalculatedTotal();
 
     document.getElementById("orderModalTitle").textContent = `Pedido ${order.tracking_code}`;
-    document.getElementById("orderModalSubtitle").textContent = `Editando el pedido de ${order.customer_name}.`;
     document.getElementById("orderTools").hidden = false;
     document.getElementById("historySection").hidden = false;
-    document.getElementById("deleteOrderButton").hidden = false;
     renderHistory(order);
+    renderPaymentAudit(order);
     updateToolsPreview();
+  }
+
+  function openOrderView(order) {
+    editingDetails = false;
+    fillExistingOrder(order);
+    document.getElementById("orderModalSubtitle").textContent = "Consultá el pedido y actualizá sus estados. Para cambiar datos o artículos, usá “Editar pedido”.";
+    applyEditMode();
     openModal();
+  }
+
+  function startEditOrder() {
+    if (!currentOrder) return;
+    editingDetails = true;
+    document.getElementById("orderModalSubtitle").textContent = "Edición completa habilitada: podés modificar datos, artículos, cantidades, precios y entrega.";
+    applyEditMode();
+    setTimeout(() => document.getElementById("customerName").focus(), 30);
+  }
+
+  function cancelModalAction() {
+    if (currentOrder?.id && editingDetails) {
+      openOrderView(currentOrder);
+      return;
+    }
+    closeModal();
   }
 
   function openModal() {
@@ -388,9 +513,13 @@
               <span>Estado</span>
               <div class="status-badge">${O.escapeHtml(stage.label)}</div>
             </div>
+            <div class="order-card-meta">
+              <span>Total</span>
+              <strong>${O.escapeHtml(O.formatMoney(Number(order.total || 0)))}</strong>
+            </div>
             <div class="order-card-actions">
-              <button class="button button-secondary button-small" type="button" data-action="edit">Editar</button>
-              <a class="button button-whatsapp button-small" href="${O.escapeHtml(O.whatsappUrl(order.customer_phone, O.buildWhatsAppMessage(order)))}" target="_blank" rel="noopener">WhatsApp</a>
+              <button class="button button-secondary button-small" type="button" data-action="view">Ver pedido</button>
+              <a class="button button-whatsapp button-small" data-action="whatsapp" href="${O.escapeHtml(O.whatsappUrl(order.customer_phone, O.buildWhatsAppMessage(order)))}" target="_blank" rel="noopener">WhatsApp</a>
             </div>
           </div>
         </article>`;
@@ -398,7 +527,14 @@
 
     ordersList.querySelectorAll("[data-order-id]").forEach(card => {
       const order = orders.find(item => item.id === card.dataset.orderId);
-      card.querySelector('[data-action="edit"]').addEventListener("click", () => openEditOrder(order));
+      card.addEventListener("click", event => {
+        if (event.target.closest('[data-action="whatsapp"]')) return;
+        openOrderView(order);
+      });
+      card.querySelector('[data-action="view"]').addEventListener("click", event => {
+        event.stopPropagation();
+        openOrderView(order);
+      });
     });
   }
 
@@ -461,53 +597,67 @@
     }
     if (!validatePreparationBeforePayment(draft)) return;
 
-    const saveButton = document.getElementById("saveOrderButton");
-    saveButton.disabled = true;
-    saveButton.textContent = "Guardando…";
+    saveOrderButton.disabled = true;
+    saveOrderButton.textContent = "Guardando…";
 
     try {
-      const orderPayload = {
-        customer_name: draft.customer_name,
-        customer_phone: draft.customer_phone,
-        customer_email: draft.customer_email,
-        status: draft.status,
-        nucleo_stage: draft.nucleo_stage,
-        reina_stage: draft.reina_stage,
-        estimated_date: draft.estimated_date,
-        delivery_method: draft.delivery_method,
-        total: draft.total,
-        public_note: draft.public_note,
-        internal_note: draft.internal_note
-      };
-
       let savedOrder;
-      if (draft.id) {
-        const { data, error } = await db.from("orders").update(orderPayload).eq("id", draft.id).select().single();
+
+      if (draft.id && !editingDetails) {
+        // Vista normal de un pedido existente: solamente se actualizan sus estados.
+        const statusPayload = {
+          status: draft.status,
+          nucleo_stage: draft.nucleo_stage,
+          reina_stage: draft.reina_stage
+        };
+        const { data, error } = await db.from("orders").update(statusPayload).eq("id", draft.id).select().single();
         if (error) throw error;
         savedOrder = data;
       } else {
-        const { data, error } = await db.from("orders").insert(orderPayload).select().single();
-        if (error) throw error;
-        savedOrder = data;
+        const orderPayload = {
+          customer_name: draft.customer_name,
+          customer_phone: draft.customer_phone,
+          customer_email: draft.customer_email,
+          status: draft.status,
+          nucleo_stage: draft.nucleo_stage,
+          reina_stage: draft.reina_stage,
+          estimated_date: draft.estimated_date,
+          delivery_method: draft.delivery_method,
+          total: draft.total,
+          public_note: draft.public_note,
+          internal_note: draft.internal_note
+        };
+
+        if (draft.id) {
+          const { data, error } = await db.from("orders").update(orderPayload).eq("id", draft.id).select().single();
+          if (error) throw error;
+          savedOrder = data;
+        } else {
+          const { data, error } = await db.from("orders").insert(orderPayload).select().single();
+          if (error) throw error;
+          savedOrder = data;
+        }
+
+        await saveItems(savedOrder.id, draft.items);
       }
 
-      await saveItems(savedOrder.id, draft.items);
+      const wasNew = !draft.id;
+      const statusOnly = Boolean(draft.id && !editingDetails);
       await loadOrders();
 
       const fresh = orders.find(order => order.id === savedOrder.id);
-      if (fresh) {
-        currentOrder = fresh;
-        openEditOrder(fresh);
-      } else {
-        closeModal();
-      }
-      showToast(draft.id ? "Pedido actualizado." : `Pedido creado: ${savedOrder.tracking_code}`);
+      if (fresh) openOrderView(fresh);
+      else closeModal();
+
+      if (wasNew) showToast(`Pedido creado: ${savedOrder.tracking_code}`);
+      else if (statusOnly) showToast("Estado del pedido actualizado.");
+      else showToast("Pedido actualizado.");
     } catch (error) {
       console.error(error);
       showToast(`No pudimos guardar el pedido: ${error?.message || "revisá Supabase"}.`, "error");
     } finally {
-      saveButton.disabled = false;
-      saveButton.textContent = "Guardar pedido";
+      saveOrderButton.disabled = false;
+      applyEditMode();
     }
   }
 
@@ -655,9 +805,10 @@
   document.getElementById("refreshButton").addEventListener("click", () => loadOrders(true));
   document.getElementById("newOrderButton").addEventListener("click", openNewOrder);
   document.getElementById("closeOrderModal").addEventListener("click", closeModal);
-  document.getElementById("cancelOrderButton").addEventListener("click", closeModal);
-  document.getElementById("addItemButton").addEventListener("click", () => addItem({ quantity: 1 }));
-  document.getElementById("deleteOrderButton").addEventListener("click", deleteCurrentOrder);
+  cancelOrderButton.addEventListener("click", cancelModalAction);
+  addItemButton.addEventListener("click", () => addItem({ quantity: 1 }));
+  editOrderButton.addEventListener("click", startEditOrder);
+  deleteOrderButton.addEventListener("click", deleteCurrentOrder);
   orderForm.addEventListener("submit", saveOrder);
 
   orderModal.addEventListener("click", event => { if (event.target === orderModal) closeModal(); });
@@ -665,7 +816,7 @@
   searchOrders.addEventListener("input", renderOrders);
   statusFilter.addEventListener("change", renderOrders);
   [orderStatus, nucleoStage, reinaStage].forEach(select => select.addEventListener("change", updateToolsPreview));
-  ["customerName", "customerPhone", "orderTotal"].forEach(id => document.getElementById(id).addEventListener("input", updateToolsPreview));
+  ["customerName", "customerPhone"].forEach(id => document.getElementById(id).addEventListener("input", updateToolsPreview));
 
   document.getElementById("copyTrackingButton").addEventListener("click", async () => {
     if (!currentOrder?.tracking_code) return;

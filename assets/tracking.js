@@ -176,15 +176,43 @@
     document.getElementById("updatedText").textContent = order.updated_at ? `Actualizado ${O.formatDateTime(order.updated_at)}` : "";
     document.getElementById("estimatedDate").textContent = O.formatDate(order.estimated_date);
     document.getElementById("deliveryMethod").textContent = order.delivery_method || "A coordinar";
+    document.getElementById("publicTotal").textContent = Number(order.total || 0) > 0 ? O.formatMoney(Number(order.total)) : "A confirmar";
 
     const itemsList = document.getElementById("itemsList");
     itemsList.innerHTML = (order.items || []).length
-      ? order.items.map(item => `
-          <div class="item-row">
-            <span>${O.escapeHtml(item.description)}</span>
-            <strong>${O.escapeHtml(item.quantity)} ${O.escapeHtml(item.unit || "u.")}</strong>
-          </div>`).join("")
+      ? order.items.map(item => {
+          const quantity = Number(item.quantity || 0);
+          const unitPrice = item.unit_price == null ? null : Number(item.unit_price);
+          const lineTotal = unitPrice == null ? null : quantity * unitPrice;
+          return `
+            <div class="item-row public-item-row">
+              <div class="public-item-main">
+                <span>${O.escapeHtml(item.description)}</span>
+                <small>${O.escapeHtml(item.quantity)} ${O.escapeHtml(item.unit || "u.")}${unitPrice == null ? "" : ` × ${O.escapeHtml(O.formatMoney(unitPrice))}`}</small>
+              </div>
+              <strong>${lineTotal == null ? `${O.escapeHtml(item.quantity)} ${O.escapeHtml(item.unit || "u.")}` : O.escapeHtml(O.formatMoney(lineTotal))}</strong>
+            </div>`;
+        }).join("")
       : '<div class="helper">Los artículos del pedido todavía no fueron detallados.</div>';
+
+    const pendingPayment = globalHistory.get("pendiente_pago");
+    const confirmedPayment = globalHistory.get("pago_confirmado");
+    const paymentInfo = document.getElementById("paymentInfo");
+    const paymentReached = O.statusIndex(order.status || "pedido_ingresado") >= O.statusIndex("pendiente_pago") || Boolean(pendingPayment);
+    paymentInfo.hidden = !paymentReached;
+    if (paymentReached) {
+      const waitingPayment = order.status === "pendiente_pago";
+      document.getElementById("paymentStatusLabel").textContent = waitingPayment ? "Pendiente de pago" : (confirmedPayment ? "Pago confirmado" : O.statusByKey(order.status).label);
+      document.getElementById("paymentAliasBox").hidden = !waitingPayment;
+
+      const pendingRow = document.getElementById("pendingPaymentDateRow");
+      pendingRow.hidden = !pendingPayment;
+      document.getElementById("pendingPaymentDate").textContent = pendingPayment ? O.formatDateTime(pendingPayment.created_at) : "";
+
+      const confirmedRow = document.getElementById("paymentConfirmedDateRow");
+      confirmedRow.hidden = !confirmedPayment;
+      document.getElementById("paymentConfirmedDate").textContent = confirmedPayment ? O.formatDateTime(confirmedPayment.created_at) : "";
+    }
 
     const note = document.getElementById("publicNote");
     if (order.public_note) {
@@ -251,6 +279,18 @@
   form.addEventListener("submit", event => {
     event.preventDefault();
     lookup(input.value);
+  });
+
+  document.getElementById("copyAliasButton").addEventListener("click", async event => {
+    const button = event.currentTarget;
+    try {
+      await O.copyText("apiariolaruda");
+      const original = button.textContent;
+      button.textContent = "Copiado";
+      setTimeout(() => { button.textContent = original; }, 1600);
+    } catch (error) {
+      console.error(error);
+    }
   });
 
   const params = new URLSearchParams(window.location.search);

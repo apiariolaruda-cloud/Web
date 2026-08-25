@@ -446,3 +446,129 @@ footer { padding: 28px 0 38px; }
 @media (max-width: 680px) {
   .preparation-grid { grid-template-columns: 1fr; }
 }
+
+/* V4 - vista de pedido, total y datos de pago */
+.order-card { cursor: pointer; }
+.order-card-main { grid-template-columns: 1.15fr .9fr .8fr .65fr auto; }
+.total-readonly {
+  color: var(--olive-dark);
+  background: rgba(119,121,79,.07);
+  font-weight: 800;
+}
+.order-view-mode .input:disabled,
+.order-view-mode .select:disabled,
+.order-view-mode .textarea:disabled {
+  opacity: 1;
+  cursor: default;
+  color: var(--text);
+  background: rgba(119,121,79,.045);
+  border-color: rgba(79,81,53,.10);
+  -webkit-text-fill-color: var(--text);
+}
+.order-view-mode .item-editor-row .remove-item:disabled { display: none; }
+.order-view-mode .item-editor-row { grid-template-columns: minmax(0,1fr) 110px 120px; }
+
+.payment-audit {
+  display: grid;
+  gap: 9px;
+}
+.payment-audit-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(119,121,79,.06);
+}
+.payment-audit-row span { color: var(--muted); font-size: .84rem; }
+.payment-audit-row strong { color: var(--olive-dark); font-size: .86rem; text-align: right; }
+
+.order-info {
+  display: flex;
+  flex-direction: column;
+}
+.public-item-row { align-items: center; }
+.public-item-main { min-width: 0; display: grid; gap: 3px; }
+.public-item-main small { color: var(--muted); font-size: .76rem; }
+.order-total-public {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 4px;
+  padding: 15px 14px;
+  border: 1px solid rgba(119,121,79,.18);
+  border-radius: 14px;
+  background: rgba(119,121,79,.075);
+}
+.order-total-public span {
+  color: var(--olive-dark);
+  font-size: .84rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.order-total-public strong {
+  color: var(--olive-dark);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+.payment-public {
+  margin-top: 16px;
+  padding: 15px;
+  border: 1px solid rgba(119,121,79,.22);
+  border-radius: 16px;
+  background: #fffdf7;
+}
+.payment-public-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--line);
+}
+.payment-public-head span { color: var(--muted); font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+.payment-public-head strong { color: var(--olive-dark); }
+.payment-alias {
+  margin-top: 13px;
+  padding: 14px;
+  border-radius: 13px;
+  background: rgba(119,121,79,.10);
+}
+.payment-alias > span { display: block; color: var(--muted); font-size: .78rem; }
+.payment-alias-line { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 5px; }
+.payment-alias-line > strong {
+  color: var(--olive-dark);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.45rem;
+  letter-spacing: .01em;
+}
+.payment-dates { display: grid; gap: 8px; margin-top: 12px; }
+.payment-date-row { display: flex; justify-content: space-between; gap: 14px; font-size: .8rem; }
+.payment-date-row span { color: var(--muted); }
+.payment-date-row strong { color: var(--olive-dark); text-align: right; }
+.delivery-footer {
+  display: grid;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.delivery-footer .info-row { padding-bottom: 9px; }
+
+@media (max-width: 900px) {
+  .order-card-main { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 680px) {
+  .order-view-mode .item-editor-row { grid-template-columns: minmax(0,1fr) 85px; }
+  .order-view-mode .item-editor-row .item-price { grid-column: 1 / 3; }
+  .payment-audit-row,
+  .payment-date-row { display: grid; gap: 3px; }
+  .payment-audit-row strong,
+  .payment-date-row strong { text-align: left; }
+  .payment-alias-line { align-items: flex-start; flex-direction: column; }
+  .public-item-row { align-items: flex-start; }
+  .public-item-row > strong { font-size: .86rem; }
+}

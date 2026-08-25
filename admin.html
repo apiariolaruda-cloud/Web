@@ -132,8 +132,9 @@
             </select>
           </div>
           <div class="field">
-            <label class="label" for="orderTotal">Total del pedido</label>
-            <input class="input" id="orderTotal" type="number" min="0" step="1" placeholder="0" />
+            <label class="label" for="orderTotal">Total calculado</label>
+            <input class="input total-readonly" id="orderTotal" type="text" value="$ 0" readonly aria-readonly="true" />
+            <span class="hint">Se calcula automáticamente con cantidad × precio unitario.</span>
           </div>
           <div class="field full">
             <label class="label" for="publicNoteInput">Nota visible para el cliente</label>
@@ -172,6 +173,11 @@
           </div>
         </div>
 
+        <div class="form-section" id="paymentAuditSection" hidden>
+          <div class="form-section-head"><h3>Registro de pago</h3></div>
+          <div class="payment-audit" id="paymentAudit"></div>
+        </div>
+
         <div class="form-section" id="historySection" hidden>
           <div class="form-section-head"><h3>Historial de estados</h3></div>
           <div class="history-list" id="historyList"></div>
@@ -179,6 +185,7 @@
 
         <div class="form-actions">
           <button class="button button-danger" id="deleteOrderButton" type="button" hidden>Eliminar pedido</button>
+          <button class="button button-soft" id="editOrderButton" type="button" hidden>Editar pedido</button>
           <button class="button button-secondary" id="cancelOrderButton" type="button">Cancelar</button>
           <button class="button button-primary" id="saveOrderButton" type="submit">Guardar pedido</button>
         </div>
@@ -188,7 +195,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="assets/orders-bundle.js?v=20260825-7"></script>
-  <script src="assets/admin.js?v=20260825-7"></script>
+  <script src="assets/orders-bundle.js?v=20260825-8"></script>
+  <script src="assets/admin.js?v=20260825-8"></script>
 </body>
 </html>
