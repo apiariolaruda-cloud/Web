@@ -35,6 +35,7 @@
           <div>
             <label class="label" for="username">Usuario</label>
             <input class="input" id="username" name="username" autocomplete="username" value="admin" required />
+            <span class="hint">Podés usar <strong>admin</strong>. La primera vez en cada navegador, si todavía no conoce tu email de acceso, el panel te lo pedirá.</span>
           </div>
           <div>
             <label class="label" for="password">Contraseña</label>
@@ -43,7 +44,7 @@
           <button class="button button-primary" id="loginButton" type="submit">Ingresar</button>
         </form>
         <div class="message" id="loginMessage" role="status"></div>
-        <div class="login-footer">La contraseña se valida contra Supabase Auth y no queda escrita en los archivos públicos del sitio.</div>
+        <div class="login-footer">La contraseña se valida contra Supabase Auth y no queda escrita en los archivos públicos del sitio. El permiso administrador se valida por el ID interno del usuario.</div>
       </section>
 
       <section class="admin-app" id="adminApp">
@@ -176,7 +177,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="assets/orders-bundle.js?v=20260825-4"></script>
-  <script src="assets/admin.js?v=20260825-4"></script>
+  <script src="assets/orders-bundle.js?v=20260825-5"></script>
+  <script src="assets/admin.js?v=20260825-5"></script>
 </body>
 </html>

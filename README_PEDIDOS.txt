@@ -82,3 +82,11 @@ Desde la web: botón "Administración" del menú superior.
 Acceso directo: /admin.html
 Usuario visible: admin
 La contraseña se valida en Supabase Auth y no se guarda en los archivos de la web.
+
+
+=== CORRECCIÓN ADMIN 2026-08-25 ===
+1. Ejecutar supabase_fix_admin.sql UNA vez en Supabase SQL Editor.
+2. En Authentication > Users, usar para el administrador un email REAL que controles (no .local) y dejarlo confirmado.
+3. Abrir admin.html con Ctrl+F5.
+4. Escribir usuario admin. La primera vez el panel pide el email real de Supabase y lo recuerda en ese navegador.
+5. La contraseña nunca se guarda en los archivos del sitio.

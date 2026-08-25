@@ -295,7 +295,7 @@ window.LA_RUDA_CONFIG = {
   supabaseUrl: "https://bfqqpniakxznbgfbektb.supabase.co",
   supabaseAnonKey: "sb_publishable_InNsEXDoaDs-hTDeHl6vPA_Q05BuaBp",
   adminUsername: "admin",
-  adminEmail: "admin@apiariolaruda.local",
+  adminEmail: "",
   siteUrl: ""
 };
 (() => {

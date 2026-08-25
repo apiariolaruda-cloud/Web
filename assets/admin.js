@@ -418,21 +418,64 @@
     showToast("Pedido eliminado.");
   }
 
+  function savedAdminEmail() {
+    return localStorage.getItem("la_ruda_admin_email") || String(cfg.adminEmail || "").trim();
+  }
+
+  function resolveLoginEmail(username) {
+    if (username.includes("@")) return username;
+    if (username !== String(cfg.adminUsername || "admin")) return "";
+
+    const saved = savedAdminEmail();
+    if (saved) return saved;
+
+    const entered = window.prompt(
+      "Primera vez en este navegador: ingresá el email REAL que figura en Authentication → Users de Supabase para el administrador.\n\nDespués de entrar correctamente vas a poder volver a usar solamente ‘admin’."
+    );
+    return String(entered || "").trim();
+  }
+
+  async function validateAdminAccess() {
+    const { data, error } = await db.rpc("la_ruda_is_admin");
+    if (error) throw error;
+    return data === true;
+  }
+
+  function friendlyAuthError(error) {
+    const raw = String(error?.message || "");
+    const code = String(error?.details?.code || error?.code || "");
+    const lowered = `${raw} ${code}`.toLowerCase();
+
+    if (lowered.includes("email_not_confirmed") || lowered.includes("email not confirmed")) {
+      return "El usuario existe, pero el email todavía no está confirmado en Supabase. En Authentication → Users abrí el usuario y confirmalo.";
+    }
+    if (lowered.includes("email_address_invalid") || lowered.includes("invalid email")) {
+      return "El email configurado en Supabase no es válido. Usá un email real que controles; no uses dominios .local.";
+    }
+    if (lowered.includes("invalid_credentials") || lowered.includes("invalid login credentials")) {
+      return "Supabase rechazó las credenciales. Revisá el email que figura en Authentication → Users y la contraseña.";
+    }
+    if (lowered.includes("failed to fetch") || lowered.includes("network")) {
+      return "No se pudo conectar con Supabase desde el navegador. Revisá Internet y volvé a intentar.";
+    }
+    return `Supabase respondió: ${raw || "no se pudo iniciar sesión"}.`;
+  }
+
   async function login(event) {
     event.preventDefault();
     clearLoginMessage();
 
     if (!db) {
-      showLoginMessage("No se pudo inicializar la conexión con Supabase. Recargá la página con Ctrl+F5. Si continúa, revisá que assets/orders-bundle.js esté en la carpeta assets.");
+      showLoginMessage("No se pudo inicializar la conexión con Supabase. Recargá la página con Ctrl+F5.");
       return;
     }
 
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
-    const expectedUsername = String(cfg.adminUsername || "admin");
+    const email = resolveLoginEmail(username);
 
-    if (username !== expectedUsername) {
-      showLoginMessage("Usuario o contraseña incorrectos.");
+    if (!email || !email.includes("@")) {
+      showLoginMessage("Para el primer acceso necesito el email real del usuario administrador creado en Supabase.");
       return;
     }
 
@@ -440,17 +483,23 @@
     loginButton.textContent = "Ingresando…";
 
     try {
-      const { data, error } = await db.auth.signInWithPassword({
-        email: cfg.adminEmail,
-        password
-      });
+      const { data, error } = await db.auth.signInWithPassword({ email, password });
       if (error || !data.session) throw error || new Error("No session");
+
+      const isAdmin = await validateAdminAccess();
+      if (!isAdmin) {
+        await db.auth.signOut();
+        throw new Error("El usuario inició sesión, pero no está autorizado como administrador. Ejecutá supabase_fix_admin.sql una vez en SQL Editor.");
+      }
+
+      localStorage.setItem("la_ruda_admin_email", email);
+      document.getElementById("username").value = String(cfg.adminUsername || "admin");
       setAuthView(true);
       document.getElementById("password").value = "";
       await loadOrders();
     } catch (error) {
       console.error(error);
-      showLoginMessage("Usuario o contraseña incorrectos.");
+      showLoginMessage(friendlyAuthError(error));
     } finally {
       loginButton.disabled = false;
       loginButton.textContent = "Ingresar";
@@ -476,13 +525,25 @@
 
     const { data } = await db.auth.getSession();
     const session = data?.session;
-    const validAdmin = session?.user?.email === cfg.adminEmail;
 
-    if (validAdmin) {
-      setAuthView(true);
-      await loadOrders();
+    if (session) {
+      try {
+        const validAdmin = await validateAdminAccess();
+        if (validAdmin) {
+          if (session.user?.email) localStorage.setItem("la_ruda_admin_email", session.user.email);
+          setAuthView(true);
+          await loadOrders();
+        } else {
+          await db.auth.signOut();
+          setAuthView(false);
+        }
+      } catch (error) {
+        console.error(error);
+        await db.auth.signOut();
+        setAuthView(false);
+        showLoginMessage("Falta aplicar la corrección de permisos. Ejecutá supabase_fix_admin.sql una vez en Supabase SQL Editor.", "info");
+      }
     } else {
-      if (session) await db.auth.signOut();
       setAuthView(false);
     }
 
