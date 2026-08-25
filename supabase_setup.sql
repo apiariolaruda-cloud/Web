@@ -306,3 +306,10 @@ using (public.la_ruda_is_admin())
 with check (public.la_ruda_is_admin());
 
 NOTIFY pgrst, 'reload schema';
+
+-- =============================================================
+-- V3 PEDIDOS MIXTOS
+-- En instalaciones nuevas, ejecutar también ACTUALIZAR_PEDIDOS_MIXTOS_V3.sql
+-- inmediatamente después de este archivo para habilitar preparación paralela
+-- de núcleos y reinas y el catálogo de artículos.
+-- =============================================================

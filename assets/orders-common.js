@@ -1,91 +1,15 @@
 (() => {
   "use strict";
 
-  const NUCLEO_STATUS_FLOW = [
-    {
-      key: "pedido_ingresado",
-      label: "Pedido ingresado",
-      short: "Ingresado",
-      description: "Recibimos el pedido y quedó registrado en nuestro sistema."
-    },
-    {
-      key: "material_preparado",
-      label: "Material preparado",
-      short: "Material preparado",
-      description: "El material necesario para el núcleo ya está preparado."
-    },
-    {
-      key: "reina_fecundada",
-      label: "Reina fecundada",
-      short: "Reina fecundada",
-      description: "La reina del pedido ya se encuentra fecundada y el núcleo sigue avanzando."
-    },
-    {
-      key: "pendiente_pago",
-      label: "Pendiente de pago",
-      short: "Pendiente de pago",
-      description: "El pedido llegó a la instancia de pago."
-    },
-    {
-      key: "pago_confirmado",
-      label: "Pago confirmado",
-      short: "Pago confirmado",
-      description: "Registramos correctamente el pago del pedido."
-    },
-    {
-      key: "envio",
-      label: "Envío / entrega",
-      short: "Envío / entrega",
-      description: "El pedido está en la etapa de despacho o coordinación de entrega."
-    },
-    {
-      key: "finalizado",
-      label: "Finalizado",
-      short: "Finalizado",
-      description: "El pedido fue entregado y quedó finalizado."
-    }
-  ];
-
-  // Para pedidos compuestos solamente por reinas reutilizamos la clave
-  // material_preparado como etapa "Reina encerrada". De esta forma no hace
-  // falta modificar la estructura actual de la base de datos.
-  const REINA_STATUS_FLOW = [
-    {
-      key: "reina_fecundada",
-      label: "Reina fecundada",
-      short: "Reina fecundada",
-      description: "La reina ya se encuentra fecundada."
-    },
-    {
-      key: "material_preparado",
-      label: "Reina encerrada",
-      short: "Reina encerrada",
-      description: "La reina ya fue encerrada y está preparada para continuar con el pedido."
-    },
-    {
-      key: "pendiente_pago",
-      label: "Pendiente de pago",
-      short: "Pendiente de pago",
-      description: "El pedido llegó a la instancia de pago."
-    },
-    {
-      key: "pago_confirmado",
-      label: "Pago confirmado",
-      short: "Pago confirmado",
-      description: "Registramos correctamente el pago del pedido."
-    },
-    {
-      key: "envio",
-      label: "Envío / entrega",
-      short: "Envío / entrega",
-      description: "El pedido está en la etapa de despacho o coordinación de entrega."
-    },
-    {
-      key: "finalizado",
-      label: "Finalizado",
-      short: "Finalizado",
-      description: "El pedido fue entregado y quedó finalizado."
-    }
+  const PRODUCT_CATALOG = [
+    { code: "miel_1kg", label: "Miel 1 kg", type: "general" },
+    { code: "miel_500g", label: "Miel 500 g", type: "general" },
+    { code: "nucleo_baby_insumo", label: "Núcleo Baby · material 3D", type: "general" },
+    { code: "alimentador_externo", label: "Alimentador externo", type: "general" },
+    { code: "jaula_belton", label: "Jaula tipo Belton", type: "general" },
+    { code: "reina_fecundada", label: "Reina fecundada + nodrizas", type: "reina" },
+    { code: "nucleo_baby_vivo", label: "Núcleo Baby · material vivo", type: "nucleo" },
+    { code: "nucleo_estandar", label: "Núcleo · 4 cuadros estándar", type: "nucleo" }
   ];
 
   const GENERAL_STATUS_FLOW = [
@@ -121,18 +45,52 @@
     }
   ];
 
-  const STATUS_FILTER = [
-    { key: "pedido_ingresado", label: "Pedido ingresado" },
-    { key: "material_preparado", label: "Material preparado / Reina encerrada" },
-    { key: "reina_fecundada", label: "Reina fecundada" },
-    { key: "pendiente_pago", label: "Pendiente de pago" },
-    { key: "pago_confirmado", label: "Pago confirmado" },
-    { key: "envio", label: "Envío / entrega" },
-    { key: "finalizado", label: "Finalizado" }
+  const NUCLEO_PREP_FLOW = [
+    {
+      key: "pendiente",
+      label: "Preparación pendiente",
+      short: "Pendiente",
+      description: "El pedido está ingresado y la preparación del núcleo todavía no comenzó."
+    },
+    {
+      key: "material_preparado",
+      label: "Material preparado",
+      short: "Material preparado",
+      description: "El material necesario para el núcleo ya está preparado."
+    },
+    {
+      key: "reina_fecundada",
+      label: "Reina fecundada",
+      short: "Reina fecundada",
+      description: "La reina destinada al núcleo ya se encuentra fecundada."
+    }
   ];
 
-  // Compatibilidad con código anterior: STATUS_FLOW sigue siendo el circuito de núcleos.
-  const STATUS_FLOW = NUCLEO_STATUS_FLOW;
+  const REINA_PREP_FLOW = [
+    {
+      key: "pendiente",
+      label: "Preparación pendiente",
+      short: "Pendiente",
+      description: "La preparación de la reina todavía no comenzó."
+    },
+    {
+      key: "reina_fecundada",
+      label: "Reina fecundada",
+      short: "Reina fecundada",
+      description: "La reina ya se encuentra fecundada."
+    },
+    {
+      key: "reina_encerrada",
+      label: "Reina encerrada",
+      short: "Reina encerrada",
+      description: "La reina ya fue encerrada y está preparada para continuar con el pedido."
+    }
+  ];
+
+  const STATUS_FILTER = GENERAL_STATUS_FLOW.map(({ key, label }) => ({ key, label }));
+  const STATUS_FLOW = GENERAL_STATUS_FLOW;
+  const NUCLEO_STATUS_FLOW = NUCLEO_PREP_FLOW;
+  const REINA_STATUS_FLOW = REINA_PREP_FLOW;
 
   const moneyFormatter = new Intl.NumberFormat("es-AR", {
     style: "currency",
@@ -223,6 +181,14 @@
     return Number.isNaN(date.getTime()) ? "" : dateTimeFormatter.format(date);
   }
 
+  function normalizedDescription(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+  }
+
   function orderItems(orderOrItems) {
     if (Array.isArray(orderOrItems)) return orderOrItems;
     if (!orderOrItems || typeof orderOrItems !== "object") return [];
@@ -231,50 +197,159 @@
     return [];
   }
 
-  function normalizedDescription(value) {
-    return String(value || "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
+  function catalogProduct(code) {
+    return PRODUCT_CATALOG.find(product => product.code === code) || null;
+  }
+
+  function inferProduct(item = {}) {
+    const exact = catalogProduct(item.product_code);
+    if (exact) return exact;
+
+    const text = normalizedDescription(item.description);
+    if (!text) return null;
+
+    const sameLabel = PRODUCT_CATALOG.find(product => normalizedDescription(product.label) === text);
+    if (sameLabel) return sameLabel;
+
+    if (/\bnucleo(s)?\b/.test(text) && !text.includes("3d") && !text.includes("insumo")) {
+      return text.includes("baby")
+        ? catalogProduct("nucleo_baby_vivo")
+        : catalogProduct("nucleo_estandar");
+    }
+
+    if (/\breina(s)?\b/.test(text) && !/\bjaula(s)?\b/.test(text)) {
+      return catalogProduct("reina_fecundada");
+    }
+
+    if (text.includes("alimentador")) return catalogProduct("alimentador_externo");
+    if (text.includes("jaula")) return catalogProduct("jaula_belton");
+    if (text.includes("miel") && text.includes("500")) return catalogProduct("miel_500g");
+    if (text.includes("miel")) return catalogProduct("miel_1kg");
+    return null;
+  }
+
+  function itemType(item = {}) {
+    if (["nucleo", "reina", "general"].includes(item.product_type)) return item.product_type;
+    return inferProduct(item)?.type || "general";
+  }
+
+  function detectOrderTypes(orderOrItems) {
+    const types = orderItems(orderOrItems).map(itemType);
+    return {
+      hasNucleo: types.includes("nucleo"),
+      hasReina: types.includes("reina")
+    };
   }
 
   function detectOrderType(orderOrItems) {
-    const descriptions = orderItems(orderOrItems)
-      .map(item => normalizedDescription(item?.description))
-      .filter(Boolean);
-
-    const hasNucleo = descriptions.some(text => /\bnucleo(s)?\b/.test(text));
-    const hasQueenOrder = descriptions.some(text =>
-      /\breina(s)?\b/.test(text) && !/\bjaula(s)?\b/.test(text)
-    );
-
-    // Si hay núcleo + reina, prevalece el circuito de núcleo porque la reina
-    // forma parte del proceso de armado del núcleo. Los artículos generales
-    // (por ejemplo una jaula de reina) usan un circuito corto y genérico.
+    const { hasNucleo, hasReina } = detectOrderTypes(orderOrItems);
+    if (hasNucleo && hasReina) return "mixto";
     if (hasNucleo) return "nucleo";
-    if (hasQueenOrder) return "reina";
+    if (hasReina) return "reina";
     return "general";
   }
 
-  function statusFlow(orderOrItems) {
-    const type = detectOrderType(orderOrItems);
-    if (type === "reina") return REINA_STATUS_FLOW;
-    if (type === "nucleo") return NUCLEO_STATUS_FLOW;
+  function statusFlow() {
     return GENERAL_STATUS_FLOW;
   }
 
-  function statusByKey(key, orderOrItems) {
-    const flow = statusFlow(orderOrItems);
-    return flow.find(status => status.key === key)
-      || NUCLEO_STATUS_FLOW.find(status => status.key === key)
-      || REINA_STATUS_FLOW.find(status => status.key === key)
-      || flow[0];
+  function statusByKey(key) {
+    return GENERAL_STATUS_FLOW.find(status => status.key === key) || GENERAL_STATUS_FLOW[0];
   }
 
-  function statusIndex(key, orderOrItems) {
-    const flow = statusFlow(orderOrItems);
-    const index = flow.findIndex(status => status.key === key);
+  function statusIndex(key) {
+    const index = GENERAL_STATUS_FLOW.findIndex(status => status.key === key);
     return index < 0 ? 0 : index;
+  }
+
+  function prepFlow(type) {
+    return type === "reina" ? REINA_PREP_FLOW : NUCLEO_PREP_FLOW;
+  }
+
+  function prepStageByKey(type, key) {
+    const flow = prepFlow(type);
+    return flow.find(stage => stage.key === key) || flow[0];
+  }
+
+  function prepStageIndex(type, key) {
+    const flow = prepFlow(type);
+    const index = flow.findIndex(stage => stage.key === key);
+    return index < 0 ? 0 : index;
+  }
+
+  function prepCompleted(type, key) {
+    const flow = prepFlow(type);
+    return prepStageIndex(type, key) === flow.length - 1;
+  }
+
+  function preparationsComplete(order) {
+    const { hasNucleo, hasReina } = detectOrderTypes(order);
+    if (hasNucleo && !prepCompleted("nucleo", order.nucleo_stage || "pendiente")) return false;
+    if (hasReina && !prepCompleted("reina", order.reina_stage || "pendiente")) return false;
+    return true;
+  }
+
+  function currentStage(order = {}) {
+    const global = statusByKey(order.status || "pedido_ingresado");
+    if ((order.status || "pedido_ingresado") !== "pedido_ingresado") return global;
+
+    const { hasNucleo, hasReina } = detectOrderTypes(order);
+    const nucleoStage = prepStageByKey("nucleo", order.nucleo_stage || "pendiente");
+    const reinaStage = prepStageByKey("reina", order.reina_stage || "pendiente");
+
+    if (hasNucleo && hasReina) {
+      if ((order.nucleo_stage || "pendiente") === "pendiente" && (order.reina_stage || "pendiente") === "pendiente") {
+        return global;
+      }
+      return {
+        key: "preparacion_mixta",
+        label: "Preparación del pedido",
+        short: "Preparación",
+        description: `Núcleo: ${nucleoStage.label}. Reina: ${reinaStage.label}.`
+      };
+    }
+
+    if (hasNucleo && (order.nucleo_stage || "pendiente") !== "pendiente") return nucleoStage;
+    if (hasReina && (order.reina_stage || "pendiente") !== "pendiente") return reinaStage;
+    return global;
+  }
+
+  function progressData(order = {}) {
+    const type = detectOrderType(order);
+    const globalStatus = order.status || "pedido_ingresado";
+    const commonCompleted = globalStatus === "pedido_ingresado" ? 0 : statusIndex(globalStatus);
+    const globalAdvanced = globalStatus !== "pedido_ingresado";
+
+    const nucleoCompleted = globalAdvanced
+      ? 2
+      : Math.max(0, prepStageIndex("nucleo", order.nucleo_stage || "pendiente"));
+    const reinaCompleted = globalAdvanced
+      ? 2
+      : Math.max(0, prepStageIndex("reina", order.reina_stage || "pendiente"));
+
+    let completed = 0;
+    let total = 0;
+
+    if (type === "nucleo") {
+      total = 7;
+      completed = 1 + nucleoCompleted + commonCompleted;
+    } else if (type === "reina") {
+      total = 6;
+      completed = reinaCompleted + commonCompleted;
+    } else if (type === "mixto") {
+      total = 9;
+      completed = 1 + nucleoCompleted + reinaCompleted + commonCompleted;
+    } else {
+      total = 5;
+      completed = 1 + commonCompleted;
+    }
+
+    completed = Math.max(0, Math.min(total, completed));
+    return {
+      completed,
+      total,
+      percent: total ? Math.round((completed / total) * 100) : 0
+    };
   }
 
   function trackingUrl(code) {
@@ -293,19 +368,18 @@
     return clean ? `https://wa.me/${clean}?text=${text}` : `https://wa.me/?text=${text}`;
   }
 
-  function buildWhatsAppMessage(order) {
+  function buildWhatsAppMessage(order, target = "auto") {
     const firstName = String(order.customer_name || "").trim().split(/\s+/)[0] || "";
     const namePart = firstName ? ` ${firstName}` : "";
     const code = order.tracking_code || "";
     const link = trackingUrl(code);
     const total = Number(order.total || 0);
     const totalLine = total > 0 ? `\nImporte registrado: ${formatMoney(total)}.` : "";
-    const type = detectOrderType(order);
 
     const common = {
       pedido_ingresado:
         `Hola${namePart}. Tu pedido ${code} en Apiario La Ruda ya fue ingresado. ` +
-        `Desde ahora podés seguir cada etapa desde este enlace:\n${link}`,
+        `Podés seguir su estado desde este enlace:\n${link}`,
       pendiente_pago:
         `Hola${namePart}. Tu pedido ${code} llegó a la etapa de pago.${totalLine} ` +
         `Podés consultar el estado actualizado acá:\n${link}`,
@@ -317,31 +391,49 @@
         `Vamos a coordinar con vos los detalles correspondientes. Seguimiento:\n${link}`,
       finalizado:
         `Hola${namePart}. Tu pedido ${code} figura como finalizado. ` +
-        `Gracias por elegir Apiario La Ruda. Podés consultar el registro del pedido acá:\n${link}`
+        `Gracias por elegir Apiario La Ruda. Seguimiento:\n${link}`
     };
 
-    const nucleoMessages = {
-      ...common,
-      material_preparado:
-        `Hola${namePart}. Tenemos novedades de tu pedido ${code}: el material para tu núcleo ya está preparado. ` +
-        `Podés ver el avance acá:\n${link}`,
-      reina_fecundada:
-        `Hola${namePart}. Tu pedido ${code} avanzó: la reina del núcleo ya se encuentra fecundada. ` +
-        `Seguimiento actualizado:\n${link}`
-    };
+    if (target === "nucleo") {
+      const stage = order.nucleo_stage || "pendiente";
+      if (stage === "material_preparado") {
+        return `Hola${namePart}. Tenemos novedades de tu pedido ${code}: el material para el núcleo ya está preparado. ` +
+          `Podés ver el avance acá:\n${link}`;
+      }
+      if (stage === "reina_fecundada") {
+        return `Hola${namePart}. Tu pedido ${code} avanzó: la reina destinada al núcleo ya se encuentra fecundada. ` +
+          `Seguimiento actualizado:\n${link}`;
+      }
+      return common.pedido_ingresado;
+    }
 
-    const reinaMessages = {
-      ...common,
-      reina_fecundada:
-        `Hola${namePart}. Tu pedido ${code} avanzó: la reina ya se encuentra fecundada. ` +
-        `Seguimiento actualizado:\n${link}`,
-      material_preparado:
-        `Hola${namePart}. Tu pedido ${code} avanzó: la reina ya se encuentra encerrada. ` +
-        `Podés ver el estado actualizado acá:\n${link}`
-    };
+    if (target === "reina") {
+      const stage = order.reina_stage || "pendiente";
+      if (stage === "reina_fecundada") {
+        return `Hola${namePart}. Tu pedido ${code} avanzó: la reina ya se encuentra fecundada. ` +
+          `Seguimiento actualizado:\n${link}`;
+      }
+      if (stage === "reina_encerrada") {
+        return `Hola${namePart}. Tu pedido ${code} avanzó: la reina ya se encuentra encerrada y preparada para la entrega. ` +
+          `Podés ver el estado actualizado acá:\n${link}`;
+      }
+      return common.pedido_ingresado;
+    }
 
-    const messages = type === "reina" ? reinaMessages : nucleoMessages;
-    return messages[order.status] || common.pedido_ingresado;
+    if ((order.status || "pedido_ingresado") !== "pedido_ingresado") {
+      return common[order.status] || common.pedido_ingresado;
+    }
+
+    const type = detectOrderType(order);
+    if (type === "nucleo") return buildWhatsAppMessage(order, "nucleo");
+    if (type === "reina") return buildWhatsAppMessage(order, "reina");
+    if (type === "mixto") {
+      const n = prepStageByKey("nucleo", order.nucleo_stage || "pendiente").label;
+      const r = prepStageByKey("reina", order.reina_stage || "pendiente").label;
+      return `Hola${namePart}. Tu pedido ${code} sigue en preparación. Núcleo: ${n}. Reina: ${r}. ` +
+        `Podés ver el seguimiento acá:\n${link}`;
+    }
+    return common.pedido_ingresado;
   }
 
   async function copyText(text) {
@@ -362,10 +454,13 @@
   }
 
   window.LaRudaOrders = {
+    PRODUCT_CATALOG,
     STATUS_FLOW,
+    GENERAL_STATUS_FLOW,
     NUCLEO_STATUS_FLOW,
     REINA_STATUS_FLOW,
-    GENERAL_STATUS_FLOW,
+    NUCLEO_PREP_FLOW,
+    REINA_PREP_FLOW,
     STATUS_FILTER,
     getConfig,
     isConfigured,
@@ -376,10 +471,22 @@
     formatMoney,
     formatDate,
     formatDateTime,
+    normalizedDescription,
+    catalogProduct,
+    inferProduct,
+    itemType,
+    detectOrderTypes,
     detectOrderType,
     statusFlow,
     statusByKey,
     statusIndex,
+    prepFlow,
+    prepStageByKey,
+    prepStageIndex,
+    prepCompleted,
+    preparationsComplete,
+    currentStage,
+    progressData,
     trackingUrl,
     whatsappUrl,
     buildWhatsAppMessage,

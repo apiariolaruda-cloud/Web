@@ -105,8 +105,18 @@
             <input class="input" id="customerEmail" type="email" />
           </div>
           <div class="field">
-            <label class="label" for="orderStatus">Estado *</label>
+            <label class="label" for="orderStatus">Estado general *</label>
             <select class="select" id="orderStatus" required></select>
+          </div>
+          <div class="field preparation-field" id="nucleoStageField" hidden>
+            <label class="label" for="nucleoStage">Preparación de núcleos *</label>
+            <select class="select" id="nucleoStage"></select>
+            <span class="hint">Se administra por separado cuando el pedido incluye núcleos.</span>
+          </div>
+          <div class="field preparation-field" id="reinaStageField" hidden>
+            <label class="label" for="reinaStage">Preparación de reinas *</label>
+            <select class="select" id="reinaStage"></select>
+            <span class="hint">Se administra por separado cuando el pedido incluye reinas.</span>
           </div>
           <div class="field">
             <label class="label" for="estimatedDateInput">Fecha estimada</label>
@@ -139,7 +149,7 @@
           <div class="form-section-head">
             <div>
               <h3>Artículos del pedido</h3>
-              <span class="form-section-hint">Agregá únicamente lo que compró el cliente.</span>
+              <span class="form-section-hint">Elegí cada producto del catálogo y cargá su cantidad.</span>
             </div>
             <button class="button button-soft button-small" id="addItemButton" type="button">+ Agregar artículo</button>
           </div>
@@ -156,11 +166,9 @@
             </div>
           </div>
           <div class="tool-card">
-            <span>Mensaje de esta etapa</span>
+            <span>Mensajes de avance</span>
             <strong id="whatsappStagePreview"></strong>
-            <div class="tool-actions">
-              <a class="button button-whatsapp button-small" id="sendWhatsAppButton" href="#" target="_blank" rel="noopener">Abrir WhatsApp</a>
-            </div>
+            <div class="tool-actions" id="whatsappButtons"></div>
           </div>
         </div>
 
@@ -180,7 +188,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="assets/orders-bundle.js?v=20260825-6"></script>
-  <script src="assets/admin.js?v=20260825-6"></script>
+  <script src="assets/orders-bundle.js?v=20260825-7"></script>
+  <script src="assets/admin.js?v=20260825-7"></script>
 </body>
 </html>

@@ -19,27 +19,160 @@
     message.className = "message";
   }
 
-  function historyMap(history) {
+  function globalHistoryMap(history) {
     const map = new Map();
-    (history || []).forEach(entry => {
-      map.set(entry.status, entry);
-    });
+    (history || []).forEach(entry => map.set(entry.status, entry));
     return map;
   }
 
+  function prepHistoryMap(history, type) {
+    const map = new Map();
+    (history || []).filter(entry => entry.preparation_type === type).forEach(entry => map.set(entry.stage, entry));
+    return map;
+  }
+
+  function timelineStep({ label, description, complete, current, date }) {
+    const classes = ["timeline-step"];
+    if (complete) classes.push("complete");
+    if (current) classes.push("current");
+    return `
+      <div class="${classes.join(" ")}">
+        <div class="timeline-dot">✓</div>
+        <div class="timeline-copy">
+          <strong>${O.escapeHtml(label)}</strong>
+          <p>${O.escapeHtml(description)}</p>
+          ${date ? `<time>${O.escapeHtml(O.formatDateTime(date))}</time>` : ""}
+        </div>
+      </div>`;
+  }
+
+  function commonPaymentTimeline(order, history) {
+    const commonSteps = O.GENERAL_STATUS_FLOW.slice(1);
+    const currentGlobalIndex = O.statusIndex(order.status || "pedido_ingresado");
+    return commonSteps.map((status, index) => {
+      const stepGlobalIndex = index + 1;
+      const complete = currentGlobalIndex >= stepGlobalIndex;
+      const current = currentGlobalIndex === stepGlobalIndex;
+      return timelineStep({
+        label: status.label,
+        description: status.description,
+        complete,
+        current,
+        date: history.get(status.key)?.created_at
+      });
+    }).join("");
+  }
+
+  function renderSingleNucleoTimeline(order, globalHistory, prepHistory) {
+    const globalAdvanced = (order.status || "pedido_ingresado") !== "pedido_ingresado";
+    const prepIndex = globalAdvanced ? 2 : O.prepStageIndex("nucleo", order.nucleo_stage || "pendiente");
+    const initialCurrent = !globalAdvanced && prepIndex === 0;
+
+    return [
+      timelineStep({
+        label: "Pedido ingresado",
+        description: O.statusByKey("pedido_ingresado").description,
+        complete: true,
+        current: initialCurrent,
+        date: globalHistory.get("pedido_ingresado")?.created_at || order.created_at
+      }),
+      ...O.NUCLEO_PREP_FLOW.slice(1).map((stage, idx) => {
+        const stepIndex = idx + 1;
+        return timelineStep({
+          label: stage.label,
+          description: stage.description,
+          complete: prepIndex >= stepIndex,
+          current: !globalAdvanced && prepIndex === stepIndex,
+          date: prepHistory.get(stage.key)?.created_at
+        });
+      }),
+      commonPaymentTimeline(order, globalHistory)
+    ].join("");
+  }
+
+  function renderSingleReinaTimeline(order, globalHistory, prepHistory) {
+    const globalAdvanced = (order.status || "pedido_ingresado") !== "pedido_ingresado";
+    const prepIndex = globalAdvanced ? 2 : O.prepStageIndex("reina", order.reina_stage || "pendiente");
+    return [
+      ...O.REINA_PREP_FLOW.slice(1).map((stage, idx) => {
+        const stepIndex = idx + 1;
+        return timelineStep({
+          label: stage.label,
+          description: stage.description,
+          complete: prepIndex >= stepIndex,
+          current: !globalAdvanced && prepIndex === stepIndex,
+          date: prepHistory.get(stage.key)?.created_at
+        });
+      }),
+      commonPaymentTimeline(order, globalHistory)
+    ].join("");
+  }
+
+  function renderMixedTimeline(order, globalHistory, nucleoHistory, reinaHistory) {
+    const globalAdvanced = (order.status || "pedido_ingresado") !== "pedido_ingresado";
+    const nucleoIndex = globalAdvanced ? 2 : O.prepStageIndex("nucleo", order.nucleo_stage || "pendiente");
+    const reinaIndex = globalAdvanced ? 2 : O.prepStageIndex("reina", order.reina_stage || "pendiente");
+
+    const prepBlock = (title, type, flow, index, history) => `
+      <section class="preparation-block">
+        <h4>${O.escapeHtml(title)}</h4>
+        <div class="timeline">
+          ${flow.slice(1).map((stage, idx) => {
+            const stepIndex = idx + 1;
+            return timelineStep({
+              label: stage.label,
+              description: stage.description,
+              complete: index >= stepIndex,
+              current: !globalAdvanced && index === stepIndex,
+              date: history.get(stage.key)?.created_at
+            });
+          }).join("")}
+        </div>
+      </section>`;
+
+    return `
+      <div class="timeline mixed-intro">
+        ${timelineStep({
+          label: "Pedido ingresado",
+          description: O.statusByKey("pedido_ingresado").description,
+          complete: true,
+          current: !globalAdvanced && nucleoIndex === 0 && reinaIndex === 0,
+          date: globalHistory.get("pedido_ingresado")?.created_at || order.created_at
+        })}
+      </div>
+      <div class="preparation-grid">
+        ${prepBlock("Preparación de núcleos", "nucleo", O.NUCLEO_PREP_FLOW, nucleoIndex, nucleoHistory)}
+        ${prepBlock("Preparación de reinas", "reina", O.REINA_PREP_FLOW, reinaIndex, reinaHistory)}
+      </div>
+      <div class="after-preparation-label">Cuando ambas preparaciones están listas</div>
+      <div class="timeline">${commonPaymentTimeline(order, globalHistory)}</div>`;
+  }
+
+  function renderGeneralTimeline(order, globalHistory) {
+    const currentGlobalIndex = O.statusIndex(order.status || "pedido_ingresado");
+    return O.GENERAL_STATUS_FLOW.map((status, index) => timelineStep({
+      label: status.label,
+      description: status.description,
+      complete: currentGlobalIndex >= index,
+      current: currentGlobalIndex === index,
+      date: globalHistory.get(status.key)?.created_at || (index === 0 ? order.created_at : null)
+    })).join("");
+  }
+
   function renderOrder(order) {
-    const flow = O.statusFlow(order);
-    const current = O.statusByKey(order.status, order);
-    const currentIndex = O.statusIndex(order.status, order);
-    const percent = Math.round(((currentIndex + 1) / flow.length) * 100);
-    const history = historyMap(order.history);
+    const type = O.detectOrderType(order);
+    const current = O.currentStage(order);
+    const progress = O.progressData(order);
+    const globalHistory = globalHistoryMap(order.history);
+    const nucleoHistory = prepHistoryMap(order.prep_history, "nucleo");
+    const reinaHistory = prepHistoryMap(order.prep_history, "reina");
 
     document.getElementById("resultCode").textContent = `Pedido ${order.tracking_code}`;
     document.getElementById("resultTitle").textContent = "Este es el estado de tu pedido.";
     document.getElementById("currentStatus").textContent = current.label;
     document.getElementById("currentDescription").textContent = current.description;
-    document.getElementById("progressFill").style.width = `${percent}%`;
-    document.getElementById("progressText").textContent = `${currentIndex + 1} de ${flow.length} etapas`;
+    document.getElementById("progressFill").style.width = `${progress.percent}%`;
+    document.getElementById("progressText").textContent = `${progress.completed} de ${progress.total} etapas`;
     document.getElementById("updatedText").textContent = order.updated_at ? `Actualizado ${O.formatDateTime(order.updated_at)}` : "";
     document.getElementById("estimatedDate").textContent = O.formatDate(order.estimated_date);
     document.getElementById("deliveryMethod").textContent = order.delivery_method || "A coordinar";
@@ -50,8 +183,7 @@
           <div class="item-row">
             <span>${O.escapeHtml(item.description)}</span>
             <strong>${O.escapeHtml(item.quantity)} ${O.escapeHtml(item.unit || "u.")}</strong>
-          </div>
-        `).join("")
+          </div>`).join("")
       : '<div class="helper">Los artículos del pedido todavía no fueron detallados.</div>';
 
     const note = document.getElementById("publicNote");
@@ -63,29 +195,20 @@
       note.textContent = "";
     }
 
-    document.getElementById("timeline").innerHTML = flow.map((status, index) => {
-      const isComplete = index < currentIndex;
-      const isCurrent = index === currentIndex;
-      const historyEntry = history.get(status.key);
-      const classes = ["timeline-step"];
-      if (isComplete) classes.push("complete");
-      if (isCurrent) classes.push("current", "complete");
-
-      return `
-        <div class="${classes.join(" ")}">
-          <div class="timeline-dot">✓</div>
-          <div class="timeline-copy">
-            <strong>${O.escapeHtml(status.label)}</strong>
-            <p>${O.escapeHtml(status.description)}</p>
-            ${historyEntry?.created_at ? `<time>${O.escapeHtml(O.formatDateTime(historyEntry.created_at))}</time>` : ""}
-          </div>
-        </div>
-      `;
-    }).join("");
+    const timeline = document.getElementById("timeline");
+    timeline.className = type === "mixto" ? "timeline-composite" : "timeline";
+    if (type === "mixto") {
+      timeline.innerHTML = renderMixedTimeline(order, globalHistory, nucleoHistory, reinaHistory);
+    } else if (type === "nucleo") {
+      timeline.innerHTML = renderSingleNucleoTimeline(order, globalHistory, nucleoHistory);
+    } else if (type === "reina") {
+      timeline.innerHTML = renderSingleReinaTimeline(order, globalHistory, reinaHistory);
+    } else {
+      timeline.innerHTML = renderGeneralTimeline(order, globalHistory);
+    }
 
     const contactMessage = `Hola, quisiera consultar por mi pedido ${order.tracking_code} de Apiario La Ruda.`;
     document.getElementById("orderWhatsApp").href = O.whatsappUrl("5491126960110", contactMessage);
-
     result.classList.add("show");
     result.scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -101,7 +224,6 @@
       input.focus();
       return;
     }
-
     if (!db) {
       setMessage("No se pudo inicializar la conexión con el seguimiento. Recargá la página con Ctrl+F5.", "error");
       return;
@@ -109,16 +231,13 @@
 
     submit.disabled = true;
     submit.textContent = "Buscando…";
-
     try {
       const { data, error } = await db.rpc("get_public_order", { p_tracking_code: cleanCode });
       if (error) throw error;
-
       if (!data) {
         setMessage("No encontramos un pedido con ese código. Revisalo y probá nuevamente.", "error");
         return;
       }
-
       renderOrder(data);
     } catch (error) {
       console.error(error);

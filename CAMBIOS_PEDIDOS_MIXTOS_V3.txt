@@ -1,0 +1,19 @@
+APIARIO LA RUDA - PEDIDOS MIXTOS V3
+
+CAMBIOS
+- Agregar artículo ahora abre un selector de productos. Ya no se escribe el nombre a mano.
+- El catálogo coincide con los productos publicados en la web.
+- Núcleo Baby material 3D queda separado de Núcleo Baby material vivo.
+- Los pedidos con Núcleo + Reina tienen DOS preparaciones independientes:
+  Preparación de núcleos: Material preparado -> Reina fecundada.
+  Preparación de reinas: Reina fecundada -> Reina encerrada.
+- Después de completar ambas: Pendiente de pago -> Pago confirmado -> Envío / entrega -> Finalizado.
+- El panel impide pasar a pago si falta completar una preparación requerida.
+- Cada preparación tiene su propio botón de WhatsApp según el avance.
+- El cliente ve ambas preparaciones por separado en un pedido mixto.
+- Los pedidos viejos se migran sin borrarlos.
+
+IMPORTANTE
+1. Ejecutar ACTUALIZAR_PEDIDOS_MIXTOS_V3.sql en Supabase > SQL Editor.
+2. Reemplazar la carpeta de la web por esta versión.
+3. Hacer Ctrl + F5 en admin.html y seguimiento.html.

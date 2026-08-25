@@ -17,6 +17,10 @@
   const orderForm = document.getElementById("orderForm");
   const itemsEditor = document.getElementById("itemsEditor");
   const orderStatus = document.getElementById("orderStatus");
+  const nucleoStage = document.getElementById("nucleoStage");
+  const reinaStage = document.getElementById("reinaStage");
+  const nucleoStageField = document.getElementById("nucleoStageField");
+  const reinaStageField = document.getElementById("reinaStageField");
   const toast = document.getElementById("toast");
 
   let orders = [];
@@ -37,9 +41,7 @@
     clearTimeout(toastTimer);
     toast.textContent = text;
     toast.className = `toast show${type === "error" ? " error" : ""}`;
-    toastTimer = setTimeout(() => {
-      toast.className = "toast";
-    }, 3400);
+    toastTimer = setTimeout(() => { toast.className = "toast"; }, 3600);
   }
 
   function setAuthView(loggedIn) {
@@ -47,19 +49,20 @@
     adminApp.classList.toggle("show", loggedIn);
   }
 
-  function renderOrderStatusOptions(orderLike = {}, preferredStatus = "") {
-    const flow = O.statusFlow(orderLike);
-    const previous = preferredStatus || orderStatus.value;
-
-    orderStatus.innerHTML = flow
+  function renderOrderStatusOptions(preferredStatus = "") {
+    const previous = preferredStatus || orderStatus.value || "pedido_ingresado";
+    orderStatus.innerHTML = O.GENERAL_STATUS_FLOW
       .map(status => `<option value="${O.escapeHtml(status.key)}">${O.escapeHtml(status.label)}</option>`)
       .join("");
+    orderStatus.value = O.GENERAL_STATUS_FLOW.some(status => status.key === previous) ? previous : "pedido_ingresado";
+  }
 
-    if (flow.some(status => status.key === previous)) {
-      orderStatus.value = previous;
-    } else {
-      orderStatus.value = flow[0]?.key || "pedido_ingresado";
-    }
+  function renderPrepOptions(select, type, preferred = "pendiente") {
+    const flow = O.prepFlow(type);
+    select.innerHTML = flow
+      .map(stage => `<option value="${O.escapeHtml(stage.key)}">${O.escapeHtml(stage.label)}</option>`)
+      .join("");
+    select.value = flow.some(stage => stage.key === preferred) ? preferred : "pendiente";
   }
 
   function setupStatusControls() {
@@ -67,50 +70,94 @@
       '<option value="">Todos los estados</option>',
       ...O.STATUS_FILTER.map(status => `<option value="${O.escapeHtml(status.key)}">${O.escapeHtml(status.label)}</option>`)
     ].join("");
+    renderOrderStatusOptions("pedido_ingresado");
+    renderPrepOptions(nucleoStage, "nucleo", "pendiente");
+    renderPrepOptions(reinaStage, "reina", "pendiente");
+  }
 
-    renderOrderStatusOptions({ items: [] }, "pedido_ingresado");
+  function legacyProductOption(item) {
+    const description = String(item.description || "").trim();
+    if (!description) return null;
+    return {
+      code: `legacy:${description}`,
+      label: `${description} · anterior`,
+      type: item.product_type || O.itemType(item),
+      description
+    };
   }
 
   function itemTemplate(item = {}) {
+    const inferred = O.inferProduct(item);
+    const selectedCode = item.product_code || inferred?.code || "";
+    const legacy = !selectedCode ? legacyProductOption(item) : null;
+    const options = [
+      '<option value="">Seleccionar artículo…</option>',
+      ...O.PRODUCT_CATALOG.map(product => (
+        `<option value="${O.escapeHtml(product.code)}" data-type="${O.escapeHtml(product.type)}"${selectedCode === product.code ? " selected" : ""}>${O.escapeHtml(product.label)}</option>`
+      )),
+      ...(legacy ? [`<option value="${O.escapeHtml(legacy.code)}" data-type="${O.escapeHtml(legacy.type)}" selected>${O.escapeHtml(legacy.label)}</option>`] : [])
+    ].join("");
+
     const row = document.createElement("div");
     row.className = "item-editor-row";
     row.innerHTML = `
-      <input class="input item-description" type="text" placeholder="Ej.: Núcleo Baby / Reina fecundada" value="${O.escapeHtml(item.description || "")}" required />
+      <select class="select item-product" required aria-label="Artículo">${options}</select>
       <input class="input item-quantity" type="number" min="0.01" step="0.01" value="${O.escapeHtml(item.quantity ?? 1)}" aria-label="Cantidad" required />
       <input class="input item-price" type="number" min="0" step="1" value="${item.unit_price == null ? "" : O.escapeHtml(item.unit_price)}" placeholder="$ unit." aria-label="Precio unitario" />
       <button class="remove-item" type="button" aria-label="Eliminar artículo">×</button>
     `;
 
+    row.dataset.legacyDescription = legacy?.description || "";
     row.querySelector(".remove-item").addEventListener("click", () => {
       row.remove();
-      syncStatusToItems();
+      syncPreparationControls();
     });
-
-    row.querySelectorAll("input").forEach(input => input.addEventListener("input", syncStatusToItems));
+    row.querySelector(".item-product").addEventListener("change", syncPreparationControls);
+    row.querySelectorAll("input").forEach(input => input.addEventListener("input", updateToolsPreview));
     return row;
   }
 
   function addItem(item = {}) {
     itemsEditor.appendChild(itemTemplate(item));
-    syncStatusToItems();
+    syncPreparationControls();
   }
 
   function collectItems() {
     return [...itemsEditor.querySelectorAll(".item-editor-row")]
-      .map((row, index) => ({
-        description: row.querySelector(".item-description").value.trim(),
-        quantity: Number(row.querySelector(".item-quantity").value || 0),
-        unit: "u.",
-        unit_price: row.querySelector(".item-price").value === "" ? null : Number(row.querySelector(".item-price").value),
-        sort_order: index
-      }))
-      .filter(item => item.description && item.quantity > 0);
+      .map((row, index) => {
+        const select = row.querySelector(".item-product");
+        const code = select.value;
+        if (!code) return null;
+
+        let product = O.catalogProduct(code);
+        let description = product?.label || "";
+        let productType = product?.type || "general";
+        let productCode = product?.code || null;
+
+        if (code.startsWith("legacy:")) {
+          description = row.dataset.legacyDescription || select.options[select.selectedIndex]?.textContent?.replace(/ · anterior$/, "") || "Artículo";
+          productType = select.options[select.selectedIndex]?.dataset.type || "general";
+          productCode = null;
+        }
+
+        return {
+          product_code: productCode,
+          product_type: productType,
+          description,
+          quantity: Number(row.querySelector(".item-quantity").value || 0),
+          unit: "u.",
+          unit_price: row.querySelector(".item-price").value === "" ? null : Number(row.querySelector(".item-price").value),
+          sort_order: index
+        };
+      })
+      .filter(item => item && item.description && item.quantity > 0);
   }
 
-  function syncStatusToItems() {
+  function syncPreparationControls() {
     const items = collectItems();
-    const previous = orderStatus.value;
-    renderOrderStatusOptions({ items }, previous);
+    const { hasNucleo, hasReina } = O.detectOrderTypes(items);
+    nucleoStageField.hidden = !hasNucleo;
+    reinaStageField.hidden = !hasReina;
     updateToolsPreview();
   }
 
@@ -123,6 +170,7 @@
 
   function currentFormOrder() {
     const items = collectItems();
+    const types = O.detectOrderTypes(items);
     const totalField = document.getElementById("orderTotal").value;
     const computedTotal = computeItemsTotal(items);
 
@@ -133,6 +181,8 @@
       customer_phone: O.cleanPhone(document.getElementById("customerPhone").value),
       customer_email: document.getElementById("customerEmail").value.trim() || null,
       status: orderStatus.value,
+      nucleo_stage: types.hasNucleo ? nucleoStage.value : "pendiente",
+      reina_stage: types.hasReina ? reinaStage.value : "pendiente",
       estimated_date: document.getElementById("estimatedDateInput").value || null,
       delivery_method: document.getElementById("deliveryMethodInput").value || "A coordinar",
       total: totalField === "" ? computedTotal : Number(totalField || 0),
@@ -142,26 +192,64 @@
     };
   }
 
+  function addWhatsAppButton(container, draft, label, target) {
+    const anchor = document.createElement("a");
+    anchor.className = "button button-whatsapp button-small";
+    anchor.target = "_blank";
+    anchor.rel = "noopener";
+    anchor.textContent = label;
+    anchor.href = O.whatsappUrl(draft.customer_phone, O.buildWhatsAppMessage(draft, target));
+    container.appendChild(anchor);
+  }
+
   function updateToolsPreview() {
     if (!currentOrder?.tracking_code) return;
     const draft = { ...currentOrder, ...currentFormOrder(), tracking_code: currentOrder.tracking_code };
     const link = O.trackingUrl(draft.tracking_code);
-    const stage = O.statusByKey(draft.status, draft);
+    const stage = O.currentStage(draft);
+    const types = O.detectOrderTypes(draft);
+    const buttons = document.getElementById("whatsappButtons");
+
     document.getElementById("trackingLinkPreview").textContent = link;
     document.getElementById("openTrackingButton").href = link;
     document.getElementById("whatsappStagePreview").textContent = stage.label;
-    document.getElementById("sendWhatsAppButton").href = O.whatsappUrl(draft.customer_phone, O.buildWhatsAppMessage(draft));
+    buttons.innerHTML = "";
+
+    if (draft.status !== "pedido_ingresado") {
+      addWhatsAppButton(buttons, draft, `WhatsApp · ${O.statusByKey(draft.status).short}`, "general");
+      return;
+    }
+
+    if (types.hasNucleo && draft.nucleo_stage !== "pendiente") {
+      addWhatsAppButton(buttons, draft, `WhatsApp · Núcleo · ${O.prepStageByKey("nucleo", draft.nucleo_stage).short}`, "nucleo");
+    }
+    if (types.hasReina && draft.reina_stage !== "pendiente") {
+      addWhatsAppButton(buttons, draft, `WhatsApp · Reina · ${O.prepStageByKey("reina", draft.reina_stage).short}`, "reina");
+    }
+    if (!buttons.children.length) {
+      addWhatsAppButton(buttons, draft, "WhatsApp · Pedido ingresado", "general");
+    }
   }
 
-  function renderHistory(history = []) {
+  function renderHistory(order) {
     const list = document.getElementById("historyList");
-    const sorted = [...history].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const globalHistory = (order.order_status_history || []).map(entry => ({
+      created_at: entry.created_at,
+      label: O.statusByKey(entry.status).label,
+      detail: entry.note || "Estado general"
+    }));
+    const prepHistory = (order.order_preparation_history || []).map(entry => ({
+      created_at: entry.created_at,
+      label: O.prepStageByKey(entry.preparation_type, entry.stage).label,
+      detail: entry.preparation_type === "nucleo" ? "Preparación de núcleos" : "Preparación de reinas"
+    }));
+    const sorted = [...globalHistory, ...prepHistory].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     list.innerHTML = sorted.length
       ? sorted.map(entry => `
           <div class="history-row">
-            <strong>${O.escapeHtml(O.statusByKey(entry.status, currentOrder || { items: collectItems() }).label)}</strong>
-            <span>${entry.note ? O.escapeHtml(entry.note) : "Cambio de estado"}</span>
+            <strong>${O.escapeHtml(entry.label)}</strong>
+            <span>${O.escapeHtml(entry.detail)}</span>
             <span>${O.escapeHtml(O.formatDateTime(entry.created_at))}</span>
           </div>
         `).join("")
@@ -172,7 +260,11 @@
     orderForm.reset();
     document.getElementById("orderId").value = "";
     itemsEditor.innerHTML = "";
-    renderOrderStatusOptions({ items: [] }, "pedido_ingresado");
+    renderOrderStatusOptions("pedido_ingresado");
+    renderPrepOptions(nucleoStage, "nucleo", "pendiente");
+    renderPrepOptions(reinaStage, "reina", "pendiente");
+    nucleoStageField.hidden = true;
+    reinaStageField.hidden = true;
     document.getElementById("deliveryMethodInput").value = "A coordinar";
     document.getElementById("orderTools").hidden = true;
     document.getElementById("historySection").hidden = true;
@@ -183,7 +275,7 @@
     currentOrder = null;
     resetForm();
     document.getElementById("orderModalTitle").textContent = "Nuevo pedido";
-    document.getElementById("orderModalSubtitle").textContent = "Al guardar se genera automáticamente el código y el link de seguimiento.";
+    document.getElementById("orderModalSubtitle").textContent = "Seleccioná los artículos. Si hay núcleo y reina, vas a gestionar las dos preparaciones por separado.";
     openModal();
     setTimeout(() => document.getElementById("customerName").focus(), 50);
   }
@@ -204,15 +296,19 @@
 
     itemsEditor.innerHTML = "";
     const items = [...(order.order_items || [])].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-    if (items.length) items.forEach(addItem);
-    renderOrderStatusOptions(order, order.status || "pedido_ingresado");
+    if (items.length) items.forEach(item => itemsEditor.appendChild(itemTemplate(item)));
+
+    renderOrderStatusOptions(order.status || "pedido_ingresado");
+    renderPrepOptions(nucleoStage, "nucleo", order.nucleo_stage || "pendiente");
+    renderPrepOptions(reinaStage, "reina", order.reina_stage || "pendiente");
+    syncPreparationControls();
 
     document.getElementById("orderModalTitle").textContent = `Pedido ${order.tracking_code}`;
     document.getElementById("orderModalSubtitle").textContent = `Editando el pedido de ${order.customer_name}.`;
     document.getElementById("orderTools").hidden = false;
     document.getElementById("historySection").hidden = false;
     document.getElementById("deleteOrderButton").hidden = false;
-    renderHistory(order.order_status_history || []);
+    renderHistory(order);
     updateToolsPreview();
     openModal();
   }
@@ -241,7 +337,6 @@
   function filteredOrders() {
     const query = searchOrders.value.trim().toLowerCase();
     const status = statusFilter.value;
-
     return orders.filter(order => {
       if (status && order.status !== status) return false;
       if (!query) return true;
@@ -272,13 +367,12 @@
         <div class="card empty-state">
           <strong>No hay pedidos para mostrar.</strong>
           <span>${orders.length ? "Probá cambiando la búsqueda o el filtro." : "Creá el primer pedido con el botón “Nuevo pedido”."}</span>
-        </div>
-      `;
+        </div>`;
       return;
     }
 
     ordersList.innerHTML = list.map(order => {
-      const status = O.statusByKey(order.status, order);
+      const stage = O.currentStage(order);
       return `
         <article class="card order-card" data-order-id="${O.escapeHtml(order.id)}">
           <div class="order-card-main">
@@ -292,15 +386,14 @@
             </div>
             <div class="order-card-meta">
               <span>Estado</span>
-              <div class="status-badge">${O.escapeHtml(status.label)}</div>
+              <div class="status-badge">${O.escapeHtml(stage.label)}</div>
             </div>
             <div class="order-card-actions">
               <button class="button button-secondary button-small" type="button" data-action="edit">Editar</button>
-              <a class="button button-whatsapp button-small" href="${O.escapeHtml(O.whatsappUrl(order.customer_phone, O.buildWhatsAppMessage(order)))}" target="_blank" rel="noopener" data-action="whatsapp">WhatsApp</a>
+              <a class="button button-whatsapp button-small" href="${O.escapeHtml(O.whatsappUrl(order.customer_phone, O.buildWhatsAppMessage(order)))}" target="_blank" rel="noopener">WhatsApp</a>
             </div>
           </div>
-        </article>
-      `;
+        </article>`;
     }).join("");
 
     ordersList.querySelectorAll("[data-order-id]").forEach(card => {
@@ -315,12 +408,12 @@
 
     const { data, error } = await db
       .from("orders")
-      .select("*, order_items(*), order_status_history(*)")
+      .select("*, order_items(*), order_status_history(*), order_preparation_history(*)")
       .order("created_at", { ascending: false });
 
     if (error) {
       console.error(error);
-      ordersList.innerHTML = '<div class="card empty-state"><strong>No pudimos cargar los pedidos.</strong><span>Revisá la conexión con Supabase.</span></div>';
+      ordersList.innerHTML = '<div class="card empty-state"><strong>No pudimos cargar los pedidos.</strong><span>Ejecutá ACTUALIZAR_PEDIDOS_MIXTOS_V3.sql en Supabase y recargá.</span></div>';
       showToast("No se pudieron cargar los pedidos.", "error");
       return;
     }
@@ -333,11 +426,24 @@
   async function saveItems(orderId, items) {
     const { error: deleteError } = await db.from("order_items").delete().eq("order_id", orderId);
     if (deleteError) throw deleteError;
-
     if (!items.length) return;
     const payload = items.map(item => ({ ...item, order_id: orderId }));
     const { error: insertError } = await db.from("order_items").insert(payload);
     if (insertError) throw insertError;
+  }
+
+  function validatePreparationBeforePayment(draft) {
+    if (draft.status === "pedido_ingresado") return true;
+    const { hasNucleo, hasReina } = O.detectOrderTypes(draft);
+    if (hasNucleo && !O.prepCompleted("nucleo", draft.nucleo_stage)) {
+      showToast("Completá la preparación del núcleo antes de pasar a pago.", "error");
+      return false;
+    }
+    if (hasReina && !O.prepCompleted("reina", draft.reina_stage)) {
+      showToast("Completá la preparación de la reina antes de pasar a pago.", "error");
+      return false;
+    }
+    return true;
   }
 
   async function saveOrder(event) {
@@ -350,9 +456,10 @@
       return;
     }
     if (!draft.items.length) {
-      showToast("Agregá al menos un artículo al pedido.", "error");
+      showToast("Seleccioná al menos un artículo del pedido.", "error");
       return;
     }
+    if (!validatePreparationBeforePayment(draft)) return;
 
     const saveButton = document.getElementById("saveOrderButton");
     saveButton.disabled = true;
@@ -364,6 +471,8 @@
         customer_phone: draft.customer_phone,
         customer_email: draft.customer_email,
         status: draft.status,
+        nucleo_stage: draft.nucleo_stage,
+        reina_stage: draft.reina_stage,
         estimated_date: draft.estimated_date,
         delivery_method: draft.delivery_method,
         total: draft.total,
@@ -373,20 +482,11 @@
 
       let savedOrder;
       if (draft.id) {
-        const { data, error } = await db
-          .from("orders")
-          .update(orderPayload)
-          .eq("id", draft.id)
-          .select()
-          .single();
+        const { data, error } = await db.from("orders").update(orderPayload).eq("id", draft.id).select().single();
         if (error) throw error;
         savedOrder = data;
       } else {
-        const { data, error } = await db
-          .from("orders")
-          .insert(orderPayload)
-          .select()
-          .single();
+        const { data, error } = await db.from("orders").insert(orderPayload).select().single();
         if (error) throw error;
         savedOrder = data;
       }
@@ -401,11 +501,10 @@
       } else {
         closeModal();
       }
-
       showToast(draft.id ? "Pedido actualizado." : `Pedido creado: ${savedOrder.tracking_code}`);
     } catch (error) {
       console.error(error);
-      showToast("No pudimos guardar el pedido. Revisá los datos e intentá otra vez.", "error");
+      showToast(`No pudimos guardar el pedido: ${error?.message || "revisá Supabase"}.`, "error");
     } finally {
       saveButton.disabled = false;
       saveButton.textContent = "Guardar pedido";
@@ -420,7 +519,6 @@
     const button = document.getElementById("deleteOrderButton");
     button.disabled = true;
     button.textContent = "Eliminando…";
-
     const { error } = await db.from("orders").delete().eq("id", currentOrder.id);
     button.disabled = false;
     button.textContent = "Eliminar pedido";
@@ -430,7 +528,6 @@
       showToast("No se pudo eliminar el pedido.", "error");
       return;
     }
-
     closeModal();
     await loadOrders();
     showToast("Pedido eliminado.");
@@ -443,14 +540,11 @@
   function resolveLoginEmail(username) {
     if (username.includes("@")) return username;
     if (username !== String(cfg.adminUsername || "admin")) return "";
-
     const saved = savedAdminEmail();
     if (saved) return saved;
-
-    const entered = window.prompt(
-      "Primera vez en este navegador: ingresá el email REAL que figura en Authentication → Users de Supabase para el administrador.\n\nDespués de entrar correctamente vas a poder volver a usar solamente ‘admin’."
-    );
-    return String(entered || "").trim();
+    return String(window.prompt(
+      "Primera vez en este navegador: ingresá el email REAL que figura en Authentication → Users de Supabase para el administrador.\n\nDespués vas a poder seguir entrando solamente con ‘admin’."
+    ) || "").trim();
   }
 
   async function validateAdminAccess() {
@@ -463,15 +557,11 @@
     const raw = String(error?.message || "");
     const code = String(error?.details?.code || error?.code || "");
     const lowered = `${raw} ${code}`.toLowerCase();
-
     if (lowered.includes("email_not_confirmed") || lowered.includes("email not confirmed")) {
-      return "El usuario existe, pero el email todavía no está confirmado en Supabase. En Authentication → Users abrí el usuario y confirmalo.";
-    }
-    if (lowered.includes("email_address_invalid") || lowered.includes("invalid email")) {
-      return "El email configurado en Supabase no es válido. Usá un email real que controles; no uses dominios .local.";
+      return "El email del administrador todavía no está confirmado en Supabase.";
     }
     if (lowered.includes("invalid_credentials") || lowered.includes("invalid login credentials")) {
-      return "Supabase rechazó las credenciales. Revisá el email que figura en Authentication → Users y la contraseña.";
+      return "Supabase rechazó las credenciales. Revisá la contraseña del usuario administrador.";
     }
     if (lowered.includes("failed to fetch") || lowered.includes("network")) {
       return "No se pudo conectar con Supabase desde el navegador. Revisá Internet y volvé a intentar.";
@@ -482,7 +572,6 @@
   async function login(event) {
     event.preventDefault();
     clearLoginMessage();
-
     if (!db) {
       showLoginMessage("No se pudo inicializar la conexión con Supabase. Recargá la página con Ctrl+F5.");
       return;
@@ -491,7 +580,6 @@
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
     const email = resolveLoginEmail(username);
-
     if (!email || !email.includes("@")) {
       showLoginMessage("Para el primer acceso necesito el email real del usuario administrador creado en Supabase.");
       return;
@@ -499,17 +587,14 @@
 
     loginButton.disabled = true;
     loginButton.textContent = "Ingresando…";
-
     try {
       const { data, error } = await db.auth.signInWithPassword({ email, password });
       if (error || !data.session) throw error || new Error("No session");
-
       const isAdmin = await validateAdminAccess();
       if (!isAdmin) {
         await db.auth.signOut();
-        throw new Error("El usuario inició sesión, pero no está autorizado como administrador. Ejecutá supabase_fix_admin.sql una vez en SQL Editor.");
+        throw new Error("El usuario inició sesión, pero no está autorizado como administrador.");
       }
-
       localStorage.setItem("la_ruda_admin_email", email);
       document.getElementById("username").value = String(cfg.adminUsername || "admin");
       setAuthView(true);
@@ -534,16 +619,14 @@
 
   async function initializeAuth() {
     setupStatusControls();
-
     if (!db) {
       setAuthView(false);
-      showLoginMessage("No se pudo inicializar la conexión con Supabase. Hacé Ctrl+F5 para descartar una copia anterior del sitio.", "info");
+      showLoginMessage("No se pudo inicializar la conexión con Supabase. Hacé Ctrl+F5.", "info");
       return;
     }
 
     const { data } = await db.auth.getSession();
     const session = data?.session;
-
     if (session) {
       try {
         const validAdmin = await validateAdminAccess();
@@ -559,15 +642,12 @@
         console.error(error);
         await db.auth.signOut();
         setAuthView(false);
-        showLoginMessage("Falta aplicar la corrección de permisos. Ejecutá supabase_fix_admin.sql una vez en Supabase SQL Editor.", "info");
+        showLoginMessage("No se pudo validar el administrador en Supabase.", "info");
       }
     } else {
       setAuthView(false);
     }
-
-    db.auth.onAuthStateChange((_event, newSession) => {
-      if (!newSession) setAuthView(false);
-    });
+    db.auth.onAuthStateChange((_event, newSession) => { if (!newSession) setAuthView(false); });
   }
 
   loginForm.addEventListener("submit", login);
@@ -580,20 +660,12 @@
   document.getElementById("deleteOrderButton").addEventListener("click", deleteCurrentOrder);
   orderForm.addEventListener("submit", saveOrder);
 
-  orderModal.addEventListener("click", event => {
-    if (event.target === orderModal) closeModal();
-  });
-
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && orderModal.classList.contains("open")) closeModal();
-  });
-
+  orderModal.addEventListener("click", event => { if (event.target === orderModal) closeModal(); });
+  document.addEventListener("keydown", event => { if (event.key === "Escape" && orderModal.classList.contains("open")) closeModal(); });
   searchOrders.addEventListener("input", renderOrders);
   statusFilter.addEventListener("change", renderOrders);
-  orderStatus.addEventListener("change", updateToolsPreview);
-  ["customerName", "customerPhone", "orderTotal"].forEach(id => {
-    document.getElementById(id).addEventListener("input", updateToolsPreview);
-  });
+  [orderStatus, nucleoStage, reinaStage].forEach(select => select.addEventListener("change", updateToolsPreview));
+  ["customerName", "customerPhone", "orderTotal"].forEach(id => document.getElementById(id).addEventListener("input", updateToolsPreview));
 
   document.getElementById("copyTrackingButton").addEventListener("click", async () => {
     if (!currentOrder?.tracking_code) return;
