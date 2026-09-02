@@ -1,0 +1,39 @@
+SEO - APIARIO LA RUDA
+Actualizado: 02-09-2026
+
+Se implementó:
+- Título y descripción SEO principal.
+- Canonical URL y metadatos Open Graph/Twitter.
+- Datos estructurados JSON-LD (Organization, WebSite, ItemList, WebPage y Product según corresponda).
+- Texto inicial orientado a insumos apícolas, material vivo, núcleos y reinas de abejas.
+- Página específica: /insumos-apicolas.html
+- Página específica: /material-vivo.html
+- Página específica: /nucleos-de-abejas.html
+- Página específica: /reinas-de-abejas.html
+- Enlaces internos entre las páginas SEO y la portada.
+- sitemap.xml con las páginas que se desean indexar.
+- robots.txt con referencia al sitemap.
+- admin.html y seguimiento.html marcados noindex,nofollow para que no compitan en Google.
+- Favicon circular conservado en todas las páginas.
+
+Búsquedas principales trabajadas de forma natural:
+- núcleos de abejas
+- venta de núcleos de abejas
+- núcleos apícolas
+- material vivo apícola
+- venta de material vivo apícola
+- abejas para apicultura
+- comprar abejas
+- insumos apícolas
+- venta de insumos apícolas
+- productos para apicultura
+- equipamiento apícola
+- reinas de abejas
+- abejas reina
+- venta de reinas
+- venta de abejas reina
+- reinas para apicultura
+
+IMPORTANTE DESPUÉS DE PUBLICAR:
+Agregar https://apiario.laruda.com.ar/ a Google Search Console y enviar:
+https://apiario.laruda.com.ar/sitemap.xml

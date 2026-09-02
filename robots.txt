@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /seguimiento.html
+
+Sitemap: https://apiario.laruda.com.ar/sitemap.xml
