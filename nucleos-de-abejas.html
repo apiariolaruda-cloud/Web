@@ -84,25 +84,6 @@
           
         </aside>
       </div>
-    
-      <div class="container hero-carousel-row">
-        <aside class="hero-carousel-card" aria-label="Galería de productos">
-          <div class="carousel-shell">
-                      <div class="carousel-label">
-                        <h3>Fotos de núcleos</h3>
-                        <p>Deslizá para ver las variantes de núcleos.</p>
-                      </div>
-                      <div class="carousel" data-carousel>
-                        <button class="carousel-btn prev" type="button" aria-label="Anterior">‹</button>
-                        <div class="carousel-viewport">
-                          <div class="carousel-track"><figure class="carousel-slide"><div class="carousel-image-wrap"><img src="assets/nucleoG.png" alt="Núcleo de 4 cuadros de Apiario La Ruda" loading="lazy" /></div><figcaption class="carousel-caption"><strong>Núcleo de 4 cuadros</strong><span>Presentación estándar para apicultura.</span></figcaption></figure><figure class="carousel-slide"><div class="carousel-image-wrap"><img src="assets/nucleoV.png" alt="Núcleo Baby de Apiario La Ruda" loading="lazy" /></div><figcaption class="carousel-caption"><strong>Núcleo Baby</strong><span>Núcleo Baby de material vivo, sujeto a disponibilidad.</span></figcaption></figure><figure class="carousel-slide"><div class="carousel-image-wrap"><img src="assets/nucleo.png" alt="Núcleo Baby 3D de Apiario La Ruda" loading="lazy" /></div><figcaption class="carousel-caption"><strong>Núcleo Baby 3D</strong><span>Versión de insumo impresa en 3D para manejo apícola.</span></figcaption></figure></div>
-                        </div>
-                        <button class="carousel-btn next" type="button" aria-label="Siguiente">›</button>
-                        <div class="carousel-dots" aria-label="Selector de diapositivas"></div>
-                      </div>
-                    </div>
-        </aside>
-      </div>
     </section>
     <section class="content">
       <div class="container grid">
@@ -127,88 +108,5 @@
   <footer><div class="container footer-row"><div class="footer-brand"><img src="assets/logo-redondo.jpg" alt="Logo de Apiario La Ruda" /><img class="footer-wordmark" src="assets/la-ruda-wordmark.png" alt="Apiario La Ruda" /></div><div>Insumos apícolas · Material vivo · Núcleos · Reinas</div></div></footer>
 
   <a class="whatsapp-float" href="https://wa.me/5491126960110?text=Hola%2C%20quisiera%20hacer%20una%20consulta%20a%20Apiario%20La%20Ruda." target="_blank" rel="noopener" aria-label="Contactar por WhatsApp" title="WhatsApp">W</a>
-
-  <script>
-    (function () {
-      document.querySelectorAll('[data-carousel]').forEach(function (carousel) {
-        const track = carousel.querySelector('.carousel-track');
-        const slides = Array.from(track.children);
-        const prev = carousel.querySelector('.carousel-btn.prev');
-        const next = carousel.querySelector('.carousel-btn.next');
-        const dotsWrap = carousel.querySelector('.carousel-dots');
-        let index = 0;
-        let timer = null;
-        const intervalMs = 2800;
-
-        function update() {
-          track.style.transform = 'translateX(-' + (index * 100) + '%)';
-          dotsWrap.querySelectorAll('.carousel-dot').forEach(function(dot, dotIndex) {
-            const active = dotIndex === index;
-            dot.classList.toggle('is-active', active);
-            dot.setAttribute('aria-current', active ? 'true' : 'false');
-          });
-        }
-
-        function goNext() {
-          index = (index + 1) % slides.length;
-          update();
-        }
-
-        function startAuto() {
-          stopAuto();
-          if (slides.length > 1) timer = window.setInterval(goNext, intervalMs);
-        }
-
-        function stopAuto() {
-          if (timer) {
-            window.clearInterval(timer);
-            timer = null;
-          }
-        }
-
-        if (slides.length <= 1) {
-          prev.style.display = 'none';
-          next.style.display = 'none';
-          dotsWrap.style.display = 'none';
-          return;
-        }
-
-        slides.forEach(function(_, dotIndex) {
-          const dot = document.createElement('button');
-          dot.type = 'button';
-          dot.className = 'carousel-dot' + (dotIndex === 0 ? ' is-active' : '');
-          dot.setAttribute('aria-label', 'Ir a la foto ' + (dotIndex + 1));
-          dot.addEventListener('click', function() {
-            index = dotIndex;
-            update();
-            startAuto();
-          });
-          dotsWrap.appendChild(dot);
-        });
-
-        prev.addEventListener('click', function() {
-          index = (index - 1 + slides.length) % slides.length;
-          update();
-          startAuto();
-        });
-
-        next.addEventListener('click', function() {
-          goNext();
-          startAuto();
-        });
-
-        carousel.addEventListener('mouseenter', stopAuto);
-        carousel.addEventListener('mouseleave', startAuto);
-        carousel.addEventListener('focusin', stopAuto);
-        carousel.addEventListener('focusout', startAuto);
-        document.addEventListener('visibilitychange', function() {
-          if (document.hidden) stopAuto(); else startAuto();
-        });
-
-        update();
-        startAuto();
-      });
-    })();
-  </script>
 </body>
 </html>
