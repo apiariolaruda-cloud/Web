@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-laruda-96.png" />
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-laruda-180.png" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Venta de núcleos de abejas y núcleos apícolas para apicultura. Consultá disponibilidad de núcleos estándar y Núcleo Baby en Apiario La Ruda." />
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <link rel="canonical" href="https://apiario.laruda.com.ar/nucleos-de-abejas.html" />
-  <link rel="icon" type="image/png" href="assets/favicon-laruda.png" />
-  <link rel="apple-touch-icon" href="assets/favicon-laruda.png" />
   <meta name="theme-color" content="#77794f" />
   <meta property="og:locale" content="es_AR" />
   <meta property="og:type" content="website" />
@@ -15,7 +16,7 @@
   <meta property="og:title" content="Núcleos de abejas | Núcleos apícolas | Apiario La Ruda" />
   <meta property="og:description" content="Venta de núcleos de abejas y núcleos apícolas para apicultura. Consultá disponibilidad de núcleos estándar y Núcleo Baby en Apiario La Ruda." />
   <meta property="og:url" content="https://apiario.laruda.com.ar/nucleos-de-abejas.html" />
-  <meta property="og:image" content="https://apiario.laruda.com.ar/assets/logo-redondo.jpg" />
+  <meta property="og:image" content="https://apiario.laruda.com.ar/assets/logo-busqueda-laruda.png" />
   <title>Núcleos de abejas | Núcleos apícolas | Apiario La Ruda</title>
   <link rel="stylesheet" href="assets/seo-pages.css" />
   <script type="application/ld+json">{
@@ -80,17 +81,6 @@
         <aside class="page-switcher" aria-label="Páginas relacionadas">
           <p class="page-switcher-title">Mini páginas</p>
           <div class="page-switcher-links"><a class="page-chip" href="material-vivo.html">Material vivo</a><a class="page-chip is-current" href="nucleos-de-abejas.html">Núcleos</a><a class="page-chip" href="reinas-de-abejas.html">Reinas</a><a class="page-chip" href="insumos-apicolas.html">Insumos</a></div>
-        </aside>
-      </div>
-    </section>
-    <section class="content">
-      <div class="container grid">
-        <article class="card">
-          <h2>Venta de núcleos de abejas</h2>
-          <p>Los núcleos de abejas forman parte de nuestra oferta de material vivo apícola. Trabajamos con opciones de 4 cuadros y Núcleo Baby, según disponibilidad y temporada.</p><p>Si estás buscando comprar abejas para iniciar o ampliar tu apiario, consultanos por fechas, cantidades y condiciones de entrega. Cada pedido de material vivo se coordina de acuerdo con la disponibilidad real de las colonias.</p>
-          <h3>Opciones disponibles</h3>
-          <div class="product-list"><div class="product"><strong>Núcleo de 4 cuadros</strong><p>Núcleo estándar de 4 cuadros. Consultar disponibilidad.</p></div><div class="product"><strong>Núcleo Baby</strong><p>Núcleo Baby de 4 cuadros con cría y alimentador. Consultar disponibilidad.</p></div></div>
-
           <div class="carousel-shell">
             <div class="carousel-label">
               <h3>Fotos de núcleos</h3>
@@ -105,6 +95,18 @@
               <div class="carousel-dots" aria-label="Selector de diapositivas"></div>
             </div>
           </div>
+        </aside>
+      </div>
+    </section>
+    <section class="content">
+      <div class="container grid">
+        <article class="card">
+          <h2>Venta de núcleos de abejas</h2>
+          <p>Los núcleos de abejas forman parte de nuestra oferta de material vivo apícola. Trabajamos con opciones de 4 cuadros y Núcleo Baby, según disponibilidad y temporada.</p><p>Si estás buscando comprar abejas para iniciar o ampliar tu apiario, consultanos por fechas, cantidades y condiciones de entrega. Cada pedido de material vivo se coordina de acuerdo con la disponibilidad real de las colonias.</p>
+          <h3>Opciones disponibles</h3>
+          <div class="product-list"><div class="product"><strong>Núcleo de 4 cuadros</strong><p>Núcleo estándar de 4 cuadros. Consultar disponibilidad.</p></div><div class="product"><strong>Núcleo Baby</strong><p>Núcleo Baby de 4 cuadros con cría y alimentador. Consultar disponibilidad.</p></div></div>
+
+
         </article>
         <aside class="card">
           <h2>También te puede interesar</h2>
@@ -129,13 +131,33 @@
         const next = carousel.querySelector('.carousel-btn.next');
         const dotsWrap = carousel.querySelector('.carousel-dots');
         let index = 0;
+        let timer = null;
+        const intervalMs = 2800;
 
         function update() {
           track.style.transform = 'translateX(-' + (index * 100) + '%)';
           dotsWrap.querySelectorAll('.carousel-dot').forEach(function(dot, dotIndex) {
-            dot.classList.toggle('is-active', dotIndex === index);
-            dot.setAttribute('aria-current', dotIndex === index ? 'true' : 'false');
+            const active = dotIndex === index;
+            dot.classList.toggle('is-active', active);
+            dot.setAttribute('aria-current', active ? 'true' : 'false');
           });
+        }
+
+        function goNext() {
+          index = (index + 1) % slides.length;
+          update();
+        }
+
+        function startAuto() {
+          stopAuto();
+          if (slides.length > 1) timer = window.setInterval(goNext, intervalMs);
+        }
+
+        function stopAuto() {
+          if (timer) {
+            window.clearInterval(timer);
+            timer = null;
+          }
         }
 
         if (slides.length <= 1) {
@@ -150,19 +172,35 @@
           dot.type = 'button';
           dot.className = 'carousel-dot' + (dotIndex === 0 ? ' is-active' : '');
           dot.setAttribute('aria-label', 'Ir a la foto ' + (dotIndex + 1));
-          dot.addEventListener('click', function() { index = dotIndex; update(); });
+          dot.addEventListener('click', function() {
+            index = dotIndex;
+            update();
+            startAuto();
+          });
           dotsWrap.appendChild(dot);
         });
 
         prev.addEventListener('click', function() {
           index = (index - 1 + slides.length) % slides.length;
           update();
+          startAuto();
         });
 
         next.addEventListener('click', function() {
-          index = (index + 1) % slides.length;
-          update();
+          goNext();
+          startAuto();
         });
+
+        carousel.addEventListener('mouseenter', stopAuto);
+        carousel.addEventListener('mouseleave', startAuto);
+        carousel.addEventListener('focusin', stopAuto);
+        carousel.addEventListener('focusout', startAuto);
+        document.addEventListener('visibilitychange', function() {
+          if (document.hidden) stopAuto(); else startAuto();
+        });
+
+        update();
+        startAuto();
       });
     })();
   </script>

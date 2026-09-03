@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <link rel="icon" type="image/png" href="assets/favicon-laruda.png" />
-  <link rel="apple-touch-icon" href="assets/favicon-laruda.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-laruda-96.png" />
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-laruda-180.png" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Venta de núcleos de abejas, reinas fecundadas, material vivo e insumos apícolas. Productos para apicultura y atención directa de Apiario La Ruda." />
+  <meta name="description" content="Venta de núcleos de abejas, reinas fecundadas, material vivo e insumos apícolas. Productos y soluciones para apicultura en Apiario La Ruda." />
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <link rel="canonical" href="https://apiario.laruda.com.ar/" />
   <meta property="og:locale" content="es_AR" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Apiario La Ruda" />
-  <meta property="og:title" content="Apiario La Ruda | Núcleos, reinas, material vivo e insumos apícolas" />
+  <meta property="og:title" content="Apiario La Ruda | Núcleos de abejas, reinas, material vivo e insumos apícolas" />
   <meta property="og:description" content="Venta de núcleos de abejas, reinas fecundadas, material vivo e insumos apícolas para apicultura." />
   <meta property="og:url" content="https://apiario.laruda.com.ar/" />
-  <meta property="og:image" content="https://apiario.laruda.com.ar/assets/logo-redondo.jpg" />
+  <meta property="og:image" content="https://apiario.laruda.com.ar/assets/logo-busqueda-laruda.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Apiario La Ruda | Núcleos, reinas, material vivo e insumos apícolas" />
+  <meta name="twitter:title" content="Apiario La Ruda | Núcleos de abejas, reinas, material vivo e insumos apícolas" />
   <meta name="twitter:description" content="Venta de núcleos de abejas, reinas fecundadas, material vivo e insumos apícolas para apicultura." />
-  <meta name="twitter:image" content="https://apiario.laruda.com.ar/assets/logo-redondo.jpg" />
+  <meta name="twitter:image" content="https://apiario.laruda.com.ar/assets/logo-busqueda-laruda.png" />
   <meta name="theme-color" content="#77794f" />
-  <title>Apiario La Ruda | Núcleos, reinas, material vivo e insumos apícolas</title>
+  <title>Apiario La Ruda | Núcleos de abejas, reinas, material vivo e insumos apícolas</title>
 
   <script type="application/ld+json">
   {
@@ -31,7 +32,7 @@
         "@id": "https://apiario.laruda.com.ar/#organization",
         "name": "Apiario La Ruda",
         "url": "https://apiario.laruda.com.ar/",
-        "logo": "https://apiario.laruda.com.ar/assets/logo-redondo.jpg",
+        "logo": "https://apiario.laruda.com.ar/assets/logo-busqueda-laruda.png",
         "description": "Venta de insumos apícolas, material vivo, núcleos de abejas y reinas fecundadas.",
         "contactPoint": {
           "@type": "ContactPoint",
@@ -851,6 +852,58 @@
       transform: translateY(-3px) scale(1.03);
     }
 
+
+
+    /* MATERIAL VIVO - PUNTOS DE ENTREGA */
+    .delivery-points {
+      margin-top: -2px;
+      padding: 16px 18px;
+      border: 1px solid rgba(119, 121, 79, .18);
+      border-radius: 18px;
+      background: rgba(255,255,255,.54);
+    }
+
+    .delivery-points-title {
+      margin: 0 0 5px;
+      color: var(--olive-dark);
+      font-size: .92rem;
+      font-weight: 850;
+    }
+
+    .delivery-points-copy {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: .88rem;
+      line-height: 1.45;
+    }
+
+    .delivery-location-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .delivery-location {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 7px 11px;
+      border: 1px solid rgba(119, 121, 79, .24);
+      border-radius: 999px;
+      background: rgba(255,255,255,.82);
+      color: var(--olive-dark);
+      font-size: .82rem;
+      font-weight: 800;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    .delivery-location:hover {
+      transform: translateY(-2px);
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(62,63,41,.10);
+    }
+
     /* MODAL */
     .modal {
       position: fixed;
@@ -1634,15 +1687,15 @@
     <section class="hero" id="inicio">
       <div class="container hero-grid">
         <div class="hero-copy reveal">
-          <div class="eyebrow">Insumos apícolas · Material vivo · Núcleos · Reinas</div>
+          <div class="eyebrow">Insumos apícolas · Material vivo · Núcleos de abejas · Reinas</div>
           <h1>
             <span class="hero-apiario">Apiario</span>
             <img class="hero-wordmark" src="assets/la-ruda-wordmark.png" alt="La Ruda" />
           </h1>
           <p>
-            <strong>Venta de insumos apícolas, material vivo, núcleos y reinas de abejas.</strong><br>
+            <strong>Venta de insumos apícolas, material vivo, núcleos de abejas y reinas de abejas.</strong><br>
             En La Ruda acompañamos al apicultor con productos para apicultura, abejas para
-            apicultura, núcleos apícolas, reinas fecundadas y atención directa desde nuestro apiario.
+            apicultura, núcleos apícolas y reinas fecundadas.
           </p>
 
           <div class="hero-actions">
@@ -1934,6 +1987,21 @@
         : whatsappUrl(`Hola, quisiera comprar ${product.name} de Apiario La Ruda.`);
     }
 
+
+
+    function renderDeliveryPoints(category) {
+      if (category !== "Material vivo - A pedido") return "";
+      return `
+        <div class="delivery-points">
+          <p class="delivery-points-title">Puntos de entrega sin cargo · Provincia de Buenos Aires</p>
+          <p class="delivery-points-copy">Nosotros acercamos el material vivo hasta estas localidades y coordinamos allí el punto de entrega. El apiario no recibe visitas ni retiros.</p>
+          <div class="delivery-location-list">
+            <a class="delivery-location" href="https://www.google.com/maps/search/?api=1&query=Ranchos%2C%20Buenos%20Aires%2C%20Argentina" target="_blank" rel="noopener">Ranchos</a><a class="delivery-location" href="https://www.google.com/maps/search/?api=1&query=General%20Belgrano%2C%20Buenos%20Aires%2C%20Argentina" target="_blank" rel="noopener">Gral. Belgrano</a><a class="delivery-location" href="https://www.google.com/maps/search/?api=1&query=Jeppener%2C%20Buenos%20Aires%2C%20Argentina" target="_blank" rel="noopener">Jeppener</a><a class="delivery-location" href="https://www.google.com/maps/search/?api=1&query=Domselaar%2C%20Buenos%20Aires%2C%20Argentina" target="_blank" rel="noopener">Domselaar</a><a class="delivery-location" href="https://www.google.com/maps/search/?api=1&query=Brandsen%2C%20Buenos%20Aires%2C%20Argentina" target="_blank" rel="noopener">Brandsen</a><a class="delivery-location" href="https://www.google.com/maps/search/?api=1&query=San%20Vicente%2C%20Buenos%20Aires%2C%20Argentina" target="_blank" rel="noopener">San Vicente</a><a class="delivery-location" href="https://www.google.com/maps/search/?api=1&query=Ezeiza%2C%20Buenos%20Aires%2C%20Argentina" target="_blank" rel="noopener">Ezeiza</a><a class="delivery-location" href="https://www.google.com/maps/search/?api=1&query=La%20Plata%2C%20Buenos%20Aires%2C%20Argentina" target="_blank" rel="noopener">La Plata</a><a class="delivery-location" href="https://www.google.com/maps/search/?api=1&query=Ca%C3%B1uelas%2C%20Buenos%20Aires%2C%20Argentina" target="_blank" rel="noopener">Cañuelas</a>
+          </div>
+        </div>
+      `;
+    }
+
     function renderProducts() {
       const categoryOrder = ["Productos", "Insumos apícolas", "Material vivo - A pedido"];
 
@@ -1943,6 +2011,7 @@
         return `
           <div class="product-category reveal" style="transition-delay:${Math.min(categoryIndex * 70, 140)}ms">
             <h3 class="product-category-title">${escapeHtml(category)}</h3>
+            ${renderDeliveryPoints(category)}
             <div class="product-grid">
               ${categoryProducts.map((product, index) => `
                 <article class="product-card">
